@@ -1,0 +1,599 @@
+/* CompanyPrep.css */
+
+.company-selection-container {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+.selection-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.selection-header h1 {
+    font-size: 2.4rem;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+}
+
+.selection-header p {
+    color: #64748b;
+    font-size: 1.1rem;
+}
+
+.search-bar {
+    max-width: 600px;
+    margin: 0 auto 3rem;
+    display: flex;
+    align-items: center;
+    background: white;
+    padding: 0.8rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.search-bar input {
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-left: 0.8rem;
+    font-size: 1rem;
+}
+
+.company-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.company-card {
+    background: white;
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+.company-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+}
+
+.company-logo {
+    height: 60px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
+
+.company-logo img {
+    max-height: 100%;
+    max-width: 120px;
+    object-fit: contain;
+}
+
+.company-info h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: #1e293b;
+}
+
+.company-info p {
+    font-size: 0.9rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+}
+
+.company-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.tag {
+    background: #f1f5f9;
+    color: #475569;
+    padding: 0.2rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.card-footer {
+    margin-top: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Company Dashboard */
+
+.company-dashboard-container {
+    padding-top: 2rem;
+    padding-bottom: 4rem;
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+}
+
+.btn-back {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: none;
+    border: none;
+    color: #64748b;
+    cursor: pointer;
+    margin-bottom: 1rem;
+    padding: 0;
+}
+
+.title-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.dashboard-header h1 {
+    font-size: 2rem;
+    margin: 0;
+}
+
+.ai-badge {
+    background: #eef2ff;
+    color: var(--primary);
+    border: 1px solid #c7d2fe;
+    padding: 0.4rem 1rem;
+    border-radius: 30px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.15);
+}
+
+.pulse {
+    animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+    0% {
+        box-shadow: 0 0 0 0px rgba(99, 102, 241, 0.4);
+    }
+
+    100% {
+        box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+    }
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.dashboard-section {
+    padding: 1.5rem;
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.section-title h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Readiness Section */
+
+.readiness-display {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+.score-circle-small {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    border: 8px solid;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-circle-small .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.readiness-info {
+    flex: 1;
+}
+
+.readiness-info p {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+}
+
+.status-badge {
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.status-badge.high {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status-badge.mid {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.status-badge.low {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+/* Rounds List Detailed (Premium Cards) */
+.rounds-list-detailed {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.round-item-detailed {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1.25rem;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.round-item-detailed:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+    border-color: var(--primary);
+    background: white;
+}
+
+.round-badge {
+    width: 38px;
+    height: 38px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
+}
+
+.round-content {
+    flex: 1;
+}
+
+.round-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+}
+
+.round-header-row h3 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+    font-weight: 700;
+}
+
+.btn-practice-mini {
+    background: white;
+    color: var(--primary);
+    border: 1px solid var(--primary);
+    padding: 0.25rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-practice-mini:hover {
+    background: var(--primary);
+    color: white;
+}
+
+.round-content p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+/* Learning Path */
+
+.path-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.path-item {
+    padding: 1rem;
+    border-radius: 10px;
+    border-left: 4px solid;
+}
+
+.path-item.high {
+    background: #fee2e2;
+    border-color: #ef4444;
+}
+
+.path-item.medium {
+    background: #f0f9ff;
+    border-color: #0ea5e9;
+}
+
+.path-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.4rem;
+}
+
+.path-header .topic {
+    font-weight: 600;
+}
+
+.priority-label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.path-item.high .priority-label {
+    background: #ef4444;
+    color: white;
+}
+
+.path-item.medium .priority-label {
+    background: #0ea5e9;
+    color: white;
+}
+
+.path-item .reason {
+    font-size: 0.85rem;
+    color: #475569;
+}
+
+/* Insight Tabs */
+
+.insight-group {
+    margin-bottom: 2rem;
+}
+
+.insight-group h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    color: #1e293b;
+}
+
+.insight-list,
+.mistake-list {
+    padding-left: 1.2rem;
+    font-size: 0.9rem;
+    color: #475569;
+}
+
+.insight-list li,
+.mistake-list li {
+    margin-bottom: 0.6rem;
+}
+
+.mistake-list li {
+    color: #b91c1c;
+}
+
+/* CTA Section */
+
+.cta-section {
+    margin-top: 3rem;
+    text-align: center;
+    padding: 3rem;
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+}
+
+.cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 1.5rem;
+}
+
+/* Upload UI */
+
+.upload-container {
+    display: flex;
+    justify-content: center;
+    padding-top: 4rem;
+}
+
+.upload-card {
+    max-width: 600px;
+    width: 100%;
+    padding: 3rem;
+    text-align: center;
+}
+
+.upload-form {
+    margin-top: 2rem;
+}
+
+.dropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 3rem;
+    margin-bottom: 2rem;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+    position: relative;
+}
+
+.dropzone.has-file {
+    border-color: var(--success);
+    background: #f0fdf4;
+}
+
+.dropzone input {
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.label-text {
+    margin-top: 1rem;
+    font-weight: 500;
+    color: #475569;
+}
+
+.upload-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.message {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.message.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.message.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+.full-width {
+    grid-column: 1 / -1;
+}
+
+.generated-questions-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.generated-q-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 15px;
+}
+
+.q-text {
+    font-size: 1rem;
+    color: #1e293b;
+    margin-bottom: 10px;
+}
+
+.q-meta {
+    display: flex;
+    gap: 10px;
+}
+
+.q-meta span {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.difficulty.easy {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.difficulty.medium {
+    background: #fef9c3;
+    color: #854d0e;
+}
+
+.difficulty.hard {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.category {
+    background: #e2e8f0;
+    color: #475569;
+}
