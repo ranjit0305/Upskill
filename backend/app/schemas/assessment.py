@@ -25,6 +25,9 @@ class QuestionResponse(BaseModel):
     difficulty: DifficultyLevel
     question: str
     options: Optional[List[str]] = None
+    sample_input: Optional[str] = None
+    sample_output: Optional[str] = None
+    test_cases_count: int = 0
     tags: List[str]
     companies: List[str]
     
@@ -67,7 +70,9 @@ class AssessmentResponse(BaseModel):
 class AnswerSubmit(BaseModel):
     """Schema for submitting an answer"""
     question_id: str
-    answer: str
+    answer: Optional[str] = None
+    code: Optional[str] = None
+    language: Optional[str] = None
     time_taken: int = 0
 
 
@@ -82,6 +87,8 @@ class SubmissionResponse(BaseModel):
     id: str
     assessment_id: str
     score: float
+    coding_score: float = 0.0
+    total_score: float = 0.0
     accuracy: float
     time_taken: int
     submitted_at: str

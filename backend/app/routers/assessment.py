@@ -158,6 +158,8 @@ async def submit_assessment(
         id=str(submission.id),
         assessment_id=submission.assessment_id,
         score=submission.score,
+        coding_score=submission.coding_score,
+        total_score=submission.total_score,
         accuracy=submission.accuracy,
         time_taken=submission.time_taken,
         submitted_at=submission.submitted_at.isoformat()
@@ -177,6 +179,8 @@ async def get_my_submissions(
             id=str(s.id),
             assessment_id=s.assessment_id,
             score=s.score,
+            coding_score=s.coding_score,
+            total_score=s.total_score,
             accuracy=s.accuracy,
             time_taken=s.time_taken,
             submitted_at=s.submitted_at.isoformat()
@@ -213,3 +217,111 @@ async def delete_assessment(
         )
     await AssessmentService.delete_assessment(assessment_id)
     return None
+
+
+@router.get("/company/{company_id}/aptitude", response_model=AssessmentResponse)
+async def get_company_aptitude_test(
+    company_id: str,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Get or generate a 50-question aptitude test for a company"""
+    assessment = await AssessmentService.create_company_aptitude_test(company_id, str(current_user.id))
+    
+    return AssessmentResponse(
+        id=str(assessment.id),
+        title=assessment.title,
+        description=assessment.description,
+        type=assessment.type,
+        duration=assessment.duration,
+        total_marks=assessment.total_marks,
+        difficulty_level=assessment.difficulty_level,
+        question_count=len(assessment.questions)
+    )
+
+
+@router.get("/{assessment_id}/questions", response_model=List[QuestionResponse])
+async def get_assessment_questions(
+    assessment_id: str,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Get specific questions for an assessment (without correct answers)"""
+    questions = await AssessmentService.get_assessment_questions(assessment_id)
+    
+    return [
+        QuestionResponse(
+            id=str(q.id),
+            type=q.type,
+            category=q.category,
+            difficulty=q.difficulty,
+            question=q.question,
+            options=q.options,
+            sample_input=q.sample_input,
+            sample_output=q.sample_output,
+            test_cases_count=len(q.test_cases) if q.test_cases else 0,
+            tags=q.tags,
+            companies=q.companies
+        )
+        for q in questions
+    ]
+
+
+@router.get("/company/{company_id}/coding", response_model=AssessmentResponse)
+async def get_company_coding_test(
+    company_id: str,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Get or generate a coding test for a company"""
+    assessment = await AssessmentService.create_company_coding_test(company_id, str(current_user.id))
+    
+    return AssessmentResponse(
+        id=str(assessment.id),
+        title=assessment.title,
+        description=assessment.description,
+        type=assessment.type,
+        duration=assessment.duration,
+        total_marks=assessment.total_marks,
+        difficulty_level=assessment.difficulty_level,
+        question_count=len(assessment.questions)
+    )
+
+
+@router.post("/run", tags=["Coding"])
+async def run_code(
+    payload: dict,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Run code snippet against sample input (live testing)"""
+    from app.services.judge0_service import Judge0Service
+    
+    code = payload.get("code")
+    language = payload.get("language")
+    stdin = payload.get("stdin")
+    expected_output = payload.get("expected_output")
+    
+    if not code or not language:
+        raise HTTPException(status_code=400, detail="Code and language required")
+        
+    result = await Judge0Service.execute_code(code, language, stdin, expected_output)
+    return result
+
+@router.post("/{assessment_id}/question/{question_id}/submit", tags=["Coding"])
+async def submit_question_answer(
+    assessment_id: str,
+    question_id: str,
+    payload: dict,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Evaluate and score a single coding question answer"""
+    code = payload.get("code")
+    language = payload.get("language")
+    
+    if not code or not language:
+        raise HTTPException(status_code=400, detail="Code and language required")
+        
+    result = await AssessmentService.evaluate_single_question(
+        assessment_id=assessment_id,
+        question_id=question_id,
+        code=code,
+        language=language
+    )
+    return result

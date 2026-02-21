@@ -32,8 +32,11 @@ class Question(Document):
     tags: List[str] = Field(default_factory=list)
     companies: List[str] = Field(default_factory=list)
     test_cases: Optional[List[dict]] = None  # For coding questions
+    sample_input: Optional[str] = None
+    sample_output: Optional[str] = None
     created_by: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_generated: bool = False
     
     class Settings:
         name = "questions"
@@ -51,13 +54,14 @@ class Assessment(Document):
     title: str
     description: Optional[str] = None
     type: QuestionType
-    questions: List[str]  # Question IDs
+    questions: List[str] = Field(default_factory=list)  # Question IDs
     duration: int  # in minutes
     total_marks: int
     difficulty_level: DifficultyLevel
     is_active: bool = True
     created_by: Optional[str] = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_generated: bool = False
     
     class Settings:
         name = "assessments"
@@ -70,9 +74,12 @@ class Assessment(Document):
 class Answer(BaseModel):
     """Individual answer model"""
     question_id: str
-    answer: str
+    answer: Optional[str] = None  # For MCQs/Text
+    code: Optional[str] = None    # For Coding
+    language: Optional[str] = None # For Coding
     is_correct: bool = False
     time_taken: int = 0  # in seconds
+    test_results: Optional[List[dict]] = None # For Coding
 
 
 class Submission(Document):
@@ -85,6 +92,8 @@ class Submission(Document):
     accuracy: float = 0.0
     time_taken: int = 0  # in seconds
     submitted_at: datetime = Field(default_factory=datetime.utcnow)
+    coding_score: float = 0.0  # Separate coding score
+    total_score: float = 0.0   # Combined score
     
     class Settings:
         name = "submissions"

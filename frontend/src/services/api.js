@@ -62,6 +62,11 @@ export const assessmentAPI = {
     createAssessment: (data) => api.post('/assessment/assessments', data),
     submitAssessment: (data) => api.post('/assessment/submissions', data),
     getSubmissions: () => api.get('/assessment/submissions'),
+    getAssessmentQuestions: (id) => api.get(`/assessment/${id}/questions`),
+    getCompanyAptitudeTest: (companyId) => api.get(`/assessment/company/${companyId}/aptitude`),
+    getCompanyCodingTest: (companyId) => api.get(`/assessment/company/${companyId}/coding`),
+    runCode: (data) => api.post('/assessment/run', data),
+    submitQuestionAnswer: (assessmentId, questionId, data) => api.post(`/assessment/${assessmentId}/question/${questionId}/submit`, data),
     deleteQuestion: (id) => api.delete(`/assessment/questions/${id}`),
     deleteAssessment: (id) => api.delete(`/assessment/assessments/${id}`),
 };
@@ -81,6 +86,7 @@ export const adminAPI = {
 // Company Preparation API
 export const companyAPI = {
     getCompanies: () => api.get('/companies'),
+    createCompany: (data) => api.post('/companies', data),
     getDashboard: (companyId, userId) => api.get(`/companies/${companyId}/dashboard`, { params: { user_id: userId } }),
     uploadFeedback: (companyId, formData) => api.post(`/companies/${companyId}/feedback`, formData),
 };

@@ -23,14 +23,8 @@ const AssessmentView = () => {
             setAssessment(response.data);
             setTimeLeft(response.data.duration * 60);
 
-            // Fetch questions for this assessment
-            // Note: The backend should ideally return questions with the assessment or have a nested endpoint
-            // Assuming assessment.questions contains IDs or the service needs adjustment
-            // For now, let's fetch based on filters or a specific endpoint if added
-            const questionsRes = await assessmentAPI.getQuestions({
-                type: response.data.type,
-                limit: response.data.question_count // Simplified for now
-            });
+            // Fetch questions specifically for this assessment
+            const questionsRes = await assessmentAPI.getAssessmentQuestions(id);
             setQuestions(questionsRes.data);
             setLoading(false);
         } catch (err) {

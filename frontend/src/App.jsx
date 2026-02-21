@@ -12,6 +12,7 @@ import AssessmentManager from './components/Admin/AssessmentManager';
 import CompanySelection from './components/CompanyPrep/CompanySelection';
 import CompanyDashboard from './components/CompanyPrep/CompanyDashboard';
 import FeedbackUpload from './components/CompanyPrep/FeedbackUpload';
+import CodingAssessmentView from './components/Assessment/CodingAssessmentView';
 import './index.css';
 
 // Protected Route Component
@@ -83,6 +84,14 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute>
                         <AssessmentView />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/coding/:id"
+                element={
+                    <ProtectedRoute>
+                        <CodingAssessmentView />
                     </ProtectedRoute>
                 }
             />

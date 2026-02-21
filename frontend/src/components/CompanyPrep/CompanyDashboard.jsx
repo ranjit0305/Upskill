@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { companyAPI } from '../../services/api';
+import { companyAPI, assessmentAPI } from '../../services/api';
 import {
     CheckCircle,
     AlertCircle,
@@ -198,13 +198,56 @@ const CompanyDashboard = () => {
             </div>
 
             <div className="cta-section">
-                <h3>Ready to test your Zoho readiness?</h3>
-                <div className="cta-buttons">
-                    <button className="btn btn-primary" onClick={() => navigate('/assessments')}>
-                        Take Zoho-Specific Test
+                <h3>Ready to test your {company.name} readiness?</h3>
+                <p>Select a round to start a specialized mock test based on {company.name}'s patterns.</p>
+                <div className="cta-buttons round-selection-grid">
+                    <button
+                        className="btn btn-primary btn-round"
+                        onClick={async () => {
+                            try {
+                                setLoading(true);
+                                const res = await assessmentAPI.getCompanyAptitudeTest(companyId);
+                                navigate(`/assessments/${res.data.id}`);
+                            } catch (err) {
+                                console.error("Failed to start aptitude test", err);
+                                alert("Failed to generate test. Make sure you have enough aptitude questions in the database.");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                    >
+                        <div className="btn-content">
+                            <span className="round-name">Aptitude Round</span>
+                            <span className="round-meta">50 Questions • 60 Mins</span>
+                        </div>
                     </button>
-                    <button className="btn btn-outline" onClick={() => navigate('/practice')}>
-                        Practice Coding Questions
+
+                    <button
+                        className="btn btn-primary btn-round"
+                        onClick={async () => {
+                            try {
+                                setLoading(true);
+                                const res = await assessmentAPI.getCompanyCodingTest(companyId);
+                                navigate(`/coding/${res.data.id}`);
+                            } catch (err) {
+                                console.error("Failed to start coding test", err);
+                                alert("Failed to generate coding test. Make sure you have coding questions in the database.");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                    >
+                        <div className="btn-content">
+                            <span className="round-name">Coding Round</span>
+                            <span className="round-meta">5 Problems • 90 Mins</span>
+                        </div>
+                    </button>
+
+                    <button className="btn btn-outline btn-round" onClick={() => navigate('/assessments')}>
+                        <div className="btn-content">
+                            <span className="round-name">Technical Round</span>
+                            <span className="round-meta">20 Questions • 30 Mins</span>
+                        </div>
                     </button>
                 </div>
             </div>

@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from typing import List, Optional
-from app.models.company import Company, InterviewFeedback, CompanyInsights, InsightMetadata
+from app.models.company import Company, InterviewFeedback, CompanyInsights, InsightMetadata, RoundDetail
 from app.services.company_service import CompanyService
 from app.services.document_processor import DocumentProcessor
 from app.models.user import UserRole
@@ -25,6 +25,17 @@ async def get_company_dashboard(company_id: str, user_id: str):
     if not dashboard_data:
         raise HTTPException(status_code=404, detail="Company not found")
     return dashboard_data
+
+@router.post("", response_model=Company, status_code=status.HTTP_201_CREATED)
+async def create_company(company: Company):
+    """Create a new company (Admin/Senior only)"""
+    # Check if company with same name exists
+    existing = await Company.find_one(Company.name == company.name)
+    if existing:
+        raise HTTPException(status_code=400, detail="Company with this name already exists")
+    
+    await company.insert()
+    return company
 
 @router.post("/{company_id}/feedback")
 async def upload_feedback(
@@ -67,11 +78,23 @@ async def upload_feedback(
             # Update/Create aggregated insights for the company using AI
             raw_insights = await DocumentProcessor.process_insights(text)
             
+            print(f"[DEBUG] Raw insights extracted: {len(raw_insights.get('rounds', []))} rounds")
+            
             current_insights = await CompanyInsights.find_one(CompanyInsights.company_id == company_id)
             if not current_insights:
+                # Convert dict rounds to RoundDetail objects
+                rounds_list = [
+                    RoundDetail(
+                        name=r["name"], 
+                        description=r["description"],
+                        difficulty=r.get("difficulty", "medium")
+                    ) 
+                    for r in raw_insights["rounds"]
+                ]
+                
                 current_insights = CompanyInsights(
                     company_id=company_id,
-                    rounds_summary=raw_insights["rounds"],
+                    rounds_summary=rounds_list,
                     insights=InsightMetadata(
                         frequently_asked_questions=raw_insights["faqs"],
                         important_technical_topics=raw_insights["topics"],
@@ -81,10 +104,10 @@ async def upload_feedback(
                     )
                 )
                 await current_insights.insert()
+                print(f"[DEBUG] Created new CompanyInsights with {len(rounds_list)} rounds")
             else:
                 # Smarter Merge: Avoid redundancy using normalize logic
                 from app.services.ai_service import AIService
-                from app.models.company import RoundDetail
                 
                 # Combine current and new rounds text for re-normalization
                 current_rounds_text = "\n".join([f"{r.name}: {r.description}" for r in current_insights.rounds_summary])
@@ -135,6 +158,9 @@ async def upload_feedback(
             results.append({"file": file.filename, "status": "success", "feedback_id": str(feedback.id)})
             
         except Exception as e:
+            print(f"[ERROR] Failed to process {file.filename}: {str(e)}")
+            import traceback
+            traceback.print_exc()
             results.append({"file": file.filename, "status": "error", "message": str(e)})
     
     return {"message": "Processing complete", "results": results}

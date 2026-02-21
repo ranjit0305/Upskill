@@ -447,6 +447,40 @@
     margin-top: 1.5rem;
 }
 
+.round-selection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    max-width: 900px;
+    margin: 2rem auto 0;
+}
+
+.btn-round {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    padding: 1.5rem !important;
+    border-radius: 12px !important;
+}
+
+.btn-round .btn-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.btn-round .round-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.btn-round .round-meta {
+    font-size: 0.8rem;
+    opacity: 0.8;
+}
+
 /* Upload UI */
 
 .upload-container {
