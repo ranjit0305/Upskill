@@ -1,0 +1,62 @@
+Starting Upskill Backend Server...
+
+Activating virtual environment...
+
+Starting uvicorn server...
+INFO:     Will watch for changes in these directories: ['D:\\Upskill_github\\Upskill\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [18192] using WatchFiles
+INFO:     Started server process [14364]
+INFO:     Waiting for application startup.
+INFO:app.main:Starting up application...
+INFO:app.database:Connected to MongoDB: upskill_db
+INFO:app.main:Database connected successfully
+INFO:     Application startup complete.
+
+
+DEBUG: Running from D:\Upskill_github\Upskill\backend\venv\Scripts\python.exe
+DEBUG: sys.path[0:3]: ['D:\\Upskill_github\\Upskill\\backend', 'D:\\Upskill_github\\Upskill\\backend', 'C:\\Users\\Ranjit\\AppData\\Local\\Programs\\Python\\Python311\\python311.zip']
+
+
+INFO:     127.0.0.1:58201 - "GET /health HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\app\routers\company.py", line 60, in upload_feedback
+    with open(file_path, "wb") as buffer:
+         ^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'uploads/feedback\\1771786061.718806_1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf'
+
+[CRITICAL DEBUG] upload_feedback called for company: 69875c7cf9f6c10cf3003119 with 1 files
+Received upload request: company_id=69875c7cf9f6c10cf3003119, uploader_id=test_admin, file_count=1
+[ERROR] Failed to process 1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf: [Errno 2] No such file or directory: 'uploads/feedback\\1771786061.718806_1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf'
+INFO:     127.0.0.1:63012 - "POST /companies/69875c7cf9f6c10cf3003119/feedback HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\app\routers\company.py", line 60, in upload_feedback
+    with open(file_path, "wb") as buffer:
+         ^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: 'uploads/feedback\\1771786107.427292_1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf'
+
+[CRITICAL DEBUG] upload_feedback called for company: 69875c7cf9f6c10cf3003119 with 1 files
+Received upload request: company_id=69875c7cf9f6c10cf3003119, uploader_id=test_admin, file_count=1
+[ERROR] Failed to process 1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf: [Errno 2] No such file or directory: 'uploads/feedback\\1771786107.427292_1771785253.298877_1771785135.011102_1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf'
+INFO:     127.0.0.1:53289 - "POST /companies/69875c7cf9f6c10cf3003119/feedback HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'scripts\create_test_pdf.py'. Reloading...
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:app.main:Shutting down application...
+INFO:app.database:Closed MongoDB connection
+INFO:     Application shutdown complete.
+INFO:     Finished server process [14364]
+WARNING:  WatchFiles detected changes in 'scripts\create_test_pdf.py'. Reloading...
+Process SpawnProcess-2:
+Traceback (most recent call last):
+  File "C:\Users\Ranjit\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 314, in _bootstrap
+    self.run()
+  File "C:\Users\Ranjit\AppData\Local\Programs\Python\Python311\Lib\multiprocessing\process.py", line 108, in run
+    self._target(*self._args, **self._kwargs)
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\uvicorn\_subprocess.py", line 72, in subprocess_started
+    sys.stdin = os.fdopen(stdin_fileno)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+  File "<frozen os>", line 1031, in fdopen
+  File "<frozen codecs>", line 309, in __init__
+KeyboardInterrupt
+Terminate batch job (Y/N)? 

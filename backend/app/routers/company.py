@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from typing import List, Optional
-from app.models.company import Company, InterviewFeedback, CompanyInsights, InsightMetadata, RoundDetail
+from app.models.company import Company, InterviewFeedback, CompanyInsights, InsightMetadata, RoundDetail, TechnicalQuestionDetail
 from app.services.company_service import CompanyService
 from app.services.document_processor import DocumentProcessor
 from app.models.user import UserRole
@@ -40,9 +40,10 @@ async def create_company(company: Company):
 @router.post("/{company_id}/feedback")
 async def upload_feedback(
     company_id: str, 
-    uploader_id: str = Form(...), 
-    files: List[UploadFile] = File(...)
+    files: List[UploadFile] = File(...),
+    uploader_id: str = Form(...)
 ):
+    print(f"\n[CRITICAL DEBUG] upload_feedback called for company: {company_id} with {len(files)} files")
     """Upload multiple interview feedback documents (Admin/Senior only)"""
     print(f"Received upload request: company_id={company_id}, uploader_id={uploader_id}, file_count={len(files)}")
     results = []
@@ -78,9 +79,18 @@ async def upload_feedback(
             # Update/Create aggregated insights for the company using AI
             raw_insights = await DocumentProcessor.process_insights(text)
             
-            print(f"[DEBUG] Raw insights extracted: {len(raw_insights.get('rounds', []))} rounds")
+            try:
+                with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                    f.write(f"ROUTER: analyze_feedback finished. Tech Qs found: {len(raw_insights.get('technical_questions', []))}\n")
+            except: pass
             
             current_insights = await CompanyInsights.find_one(CompanyInsights.company_id == company_id)
+            
+            try:
+                with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                    f.write(f"ROUTER: find_one finished. Found existing insights? {current_insights is not None}\n")
+            except: pass
+
             if not current_insights:
                 # Convert dict rounds to RoundDetail objects
                 rounds_list = [
@@ -100,32 +110,108 @@ async def upload_feedback(
                         important_technical_topics=raw_insights["topics"],
                         coding_difficulty=raw_insights["difficulty"],
                         common_mistakes=raw_insights["mistakes"],
-                        preparation_tips=raw_insights["tips"]
+                        preparation_tips=raw_insights["tips"],
+                        technical_questions=raw_insights.get("technical_questions", [])
                     )
                 )
+                
+                try:
+                    with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                        f.write(f"ROUTER: Creating NEW insights. Tech Qs: {len(current_insights.insights.technical_questions)}\n")
+                except: pass
+                
                 await current_insights.insert()
                 print(f"[DEBUG] Created new CompanyInsights with {len(rounds_list)} rounds")
             else:
                 # Smarter Merge: Avoid redundancy using normalize logic
                 from app.services.ai_service import AIService
                 
-                # Combine current and new rounds text for re-normalization
-                current_rounds_text = "\n".join([f"{r.name}: {r.description}" for r in current_insights.rounds_summary])
-                combined_rounds_text = current_rounds_text + "\n" + text
-                
-                new_structured_rounds = AIService._extract_and_normalize_rounds(combined_rounds_text)
-                
-                # Convert dict to RoundDetail models
-                current_insights.rounds_summary = [
-                    RoundDetail(name=r["name"], description=r["description"]) 
-                    for r in new_structured_rounds
-                ]
-                
-                # Merge lists with set deduplication
+                # PRIORITY 1: Merge Technical Questions
+                try:
+                    all_raw_qs = current_insights.insights.technical_questions + [
+                        TechnicalQuestionDetail(**new_q) for new_q in raw_insights.get("technical_questions", [])
+                    ]
+                    
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"\nROUTER: STARTING Technical Question Merge. Current count: {len(current_insights.insights.technical_questions)}, New from PDF: {len(raw_insights.get('technical_questions', []))}\n")
+                    except: pass
+
+                    final_qs = []
+                    seen_norm = set()
+                    
+                    # Broad keywords for the router cleanup phase
+                    known_keywords = [
+                        "Java", "Python", "SQL", "DBMS", "OS", "Operating System", "Data Structures", "Algorithms", "Networking", 
+                        "C++", "React", "Node", "OOPS", "WebRTC", "API", "REST", "Frontend", "Backend", 
+                        "Fullstack", "DNS", "AWS", "Docker", "Kubernetes", "Microservices", "Security", "Cloud", 
+                        "Git", "CSS", "HTML", "Javascript", "Typescript", "Thread", "Process", "Deadlock", 
+                        "Memory", "Cache", "Interface", "Abstract", "Class", "Inheritance", "Polymorphism", 
+                        "Encapsulation", "Abstraction", "Exception", "Try", "Catch", "Finally", "Throw", 
+                        "Collection", "List", "Map", "Set", "ArrayList", "LinkedList", "HashMap", "Stack", 
+                        "Queue", "Recursion", "Complexity", "Big O", "Sorting", "Searching", "Graph", "Tree", 
+                        "Binary", "Pointer", "Reference", "Given", "Constructor", "Destructor", "Static", "Final", 
+                        "Access Modifier", "Overloading", "Overriding", "Lambda", "Stream", "Async", "Await", 
+                        "Promise", "Component", "State", "Props", "Hook", "Database", "Index", "Join", "Query", 
+                        "Transaction", "Normalisation", "Normalization"
+                    ]
+                    
+                    for q in all_raw_qs:
+                        q_text = q.question
+                        norm = "".join(filter(str.isalnum, q_text.lower()))
+                        if norm in seen_norm: continue
+                        
+                        has_topic = (q.topic and q.topic != "General Technical") or \
+                                    any(kw.lower() in q_text.lower() for kw in known_keywords)
+                                    
+                        if AIService._is_valid_technical_question(q_text, has_topic):
+                            final_qs.append(q)
+                            seen_norm.add(norm)
+                    
+                    current_insights.insights.technical_questions = final_qs[:25] # Increased limit
+                    
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"ROUTER: Technical Merge DONE. Final count: {len(current_insights.insights.technical_questions)}\n")
+                    except: pass
+                except Exception as e:
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"ROUTER ERROR in Tech Merge: {e}\n")
+                    except: pass
+
+                # PRIORITY 2: Merge other fields
                 current_insights.insights.frequently_asked_questions = list(set(current_insights.insights.frequently_asked_questions + raw_insights["faqs"]))[:15]
                 current_insights.insights.important_technical_topics = list(set(current_insights.insights.important_technical_topics + raw_insights["topics"]))[:15]
                 current_insights.insights.common_mistakes = list(set(current_insights.insights.common_mistakes + raw_insights["mistakes"]))[:10]
                 current_insights.insights.preparation_tips = list(set(current_insights.insights.preparation_tips + raw_insights["tips"]))[:10]
+
+                # PRIORITY 3: Merge Rounds (Expensive)
+                try:
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"ROUTER: Starting Rounds Merge (Slow path)...\n")
+                    except: pass
+
+                    current_rounds_text = "\n".join([f"{r.name}: {r.description}" for r in current_insights.rounds_summary])
+                    combined_rounds_text = current_rounds_text + "\n" + text
+                    new_structured_rounds = AIService._extract_and_normalize_rounds(combined_rounds_text)
+                    
+                    current_insights.rounds_summary = [
+                        RoundDetail(name=r["name"], description=r["description"]) 
+                        for r in new_structured_rounds
+                    ]
+                    
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"ROUTER: Rounds Merge DONE.\n")
+                    except: pass
+                except Exception as e:
+                    try:
+                        with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                            f.write(f"ROUTER ERROR in Rounds Merge: {e}\n")
+                    except: pass
+
                 current_insights.last_updated = datetime.utcnow()
                 await current_insights.save()
                 

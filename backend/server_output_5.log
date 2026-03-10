@@ -1,0 +1,110 @@
+Starting Upskill Backend Server...
+
+Activating virtual environment...
+
+Starting uvicorn server...
+INFO:     Will watch for changes in these directories: ['D:\\Upskill_github\\Upskill\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [7308] using WatchFiles
+INFO:     Started server process [26512]
+INFO:     Waiting for application startup.
+INFO:app.main:Starting up application...
+INFO:app.database:Connected to MongoDB: upskill_db
+INFO:app.main:Database connected successfully
+INFO:     Application startup complete.
+D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\utils\generic.py:441: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  _torch_pytree._register_pytree_node(
+D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\utils\generic.py:309: FutureWarning: `torch.utils._pytree._register_pytree_node` is deprecated. Please use `torch.utils._pytree.register_pytree_node` instead.
+  _torch_pytree._register_pytree_node(
+INFO:app.services.ml_service:Loading DistilBERT QA model...
+D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+INFO:app.services.ml_service:DistilBERT model loaded successfully.
+INFO:app.services.ai_service:spaCy model loaded successfully.
+INFO:app.services.ml_service:Loading BART Zero-Shot Classification model...
+D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\huggingface_hub\file_download.py:949: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+WARNING:huggingface_hub.file_download:Xet Storage is enabled for this repo, but the 'hf_xet' package is not installed. Falling back to regular HTTP download. For better performance, install the package with: `pip install huggingface_hub[hf_xet]` or `pip install hf_xet`
+ERROR:app.services.ml_service:Failed to load classification model: Could not load model facebook/bart-large-mnli with any of the following classes: (<class 'transformers.models.auto.modeling_auto.AutoModelForSequenceClassification'>, <class 'transformers.models.bart.modeling_bart.BartForSequenceClassification'>). See the original errors:
+
+while loading with AutoModelForSequenceClassification, an error is thrown:
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\base.py", line 269, in infer_framework_load_model
+    model = model_class.from_pretrained(model, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\models\auto\auto_factory.py", line 566, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\modeling_utils.py", line 3371, in from_pretrained
+    with safe_open(resolved_archive_file, framework="pt") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: The paging file is too small for this operation to complete. (os error 1455)
+
+while loading with BartForSequenceClassification, an error is thrown:
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\base.py", line 269, in infer_framework_load_model
+    model = model_class.from_pretrained(model, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\modeling_utils.py", line 3371, in from_pretrained
+    with safe_open(resolved_archive_file, framework="pt") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: The paging file is too small for this operation to complete. (os error 1455)
+
+
+
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\app\routers\company.py", line 80, in upload_feedback
+    raw_insights = await DocumentProcessor.process_insights(text)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\document_processor.py", line 42, in process_insights
+    return await AIService.analyze_feedback(text)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\ai_service.py", line 49, in analyze_feedback
+    tech_questions_raw = AIService._extract_technical_questions_with_metadata(text)
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\ai_service.py", line 199, in _extract_technical_questions_with_metadata
+    classification = MLService.classify_text(sent, FILTER_LABELS)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\ml_service.py", line 69, in classify_text
+    classifier = MLService.get_classification_pipeline()
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\ml_service.py", line 40, in get_classification_pipeline
+    raise e
+  File "D:\Upskill_github\Upskill\backend\app\services\ml_service.py", line 33, in get_classification_pipeline
+    cls._classification_pipeline = pipeline(
+                                   ^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\__init__.py", line 870, in pipeline
+    framework, model = infer_framework_load_model(
+                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\base.py", line 282, in infer_framework_load_model
+    raise ValueError(
+ValueError: Could not load model facebook/bart-large-mnli with any of the following classes: (<class 'transformers.models.auto.modeling_auto.AutoModelForSequenceClassification'>, <class 'transformers.models.bart.modeling_bart.BartForSequenceClassification'>). See the original errors:
+
+while loading with AutoModelForSequenceClassification, an error is thrown:
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\base.py", line 269, in infer_framework_load_model
+    model = model_class.from_pretrained(model, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\models\auto\auto_factory.py", line 566, in from_pretrained
+    return model_class.from_pretrained(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\modeling_utils.py", line 3371, in from_pretrained
+    with safe_open(resolved_archive_file, framework="pt") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: The paging file is too small for this operation to complete. (os error 1455)
+
+while loading with BartForSequenceClassification, an error is thrown:
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\pipelines\base.py", line 269, in infer_framework_load_model
+    model = model_class.from_pretrained(model, **kwargs)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\venv\Lib\site-packages\transformers\modeling_utils.py", line 3371, in from_pretrained
+    with safe_open(resolved_archive_file, framework="pt") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: The paging file is too small for this operation to complete. (os error 1455)
+
+
+
+WARNING:  WatchFiles detected changes in 'app\services\ml_service.py'. Reloading...
+^CTerminate batch job (Y/N)? 

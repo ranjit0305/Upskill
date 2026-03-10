@@ -7,12 +7,33 @@ from app.services.ml_service import MLService
 logger = logging.getLogger(__name__)
 
 class AIService:
+    _nlp = None
+
+    @classmethod
+    def get_spacy_nlp(cls):
+        if cls._nlp is None:
+            import spacy
+            try:
+                # Load with disable parser to speed it up if we only need sents? 
+                # Actually for sents we need the parser or sentencizer.
+                cls._nlp = spacy.load("en_core_web_sm")
+                logger.info("spaCy model loaded successfully.")
+            except Exception as e:
+                logger.error(f"Failed to load spaCy model: {e}")
+        return cls._nlp
     @staticmethod
     async def analyze_feedback(text: str) -> Dict[str, Any]:
         """
         Analyze feedback text to extract structured insights.
         Uses DistilBERT for intelligent extraction, enhanced by NLP heuristics.
         """
+        print(f"\n[CRITICAL DEBUG] analyze_feedback called with text length: {len(text)}")
+        try:
+            with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                f.write(f"\nanalyze_feedback called at timestamp... length: {len(text)}\n")
+        except Exception as e:
+            print(f"[CRITICAL DEBUG] Failed to write to absolute_debug.log: {e}")
+
         extracted_rounds = AIService._extract_and_normalize_rounds(text)
         
         # Use ML to fill in gaps or get better summaries if rounds are missing specific details
@@ -23,6 +44,9 @@ class AIService:
             topics = AIService._extract_topics(text)
             
         difficulty = AIService._detect_difficulty(text) # Logic is simple enough for regex usually, but can be ML enriched
+
+        # Extracted Technical Questions with Referrals
+        tech_questions_raw = AIService._extract_technical_questions_with_metadata(text)
         
         insights = {
             "rounds": extracted_rounds,
@@ -30,9 +54,200 @@ class AIService:
             "topics": topics,
             "difficulty": difficulty,
             "mistakes": AIService._extract_list(text, ["mistake", "caution", "avoid", "failed"]),
-            "tips": AIService._extract_list(text, ["tip", "advice", "suggest", "recommend"])
+            "tips": AIService._extract_list(text, ["tip", "advice", "suggest", "recommend"]),
+            "technical_questions": tech_questions_raw
         }
         return insights
+
+    @staticmethod
+    def _get_topic_referral_links(topic: str) -> List[Dict[str, str]]:
+        """Predefined study materials for common topics"""
+        referral_map = {
+            "Java": [
+                {"label": "Java Tutorial (W3Schools)", "url": "https://www.w3schools.com/java/"},
+                {"label": "Java Programming (GeeksforGeeks)", "url": "https://www.geeksforgeeks.org/java/"}
+            ],
+            "Python": [
+                {"label": "Python Tutorial", "url": "https://docs.python.org/3/tutorial/"},
+                {"label": "Python for Beginners", "url": "https://www.python.org/about/gettingstarted/"}
+            ],
+            "SQL": [
+                {"label": "SQL Tutorial", "url": "https://www.w3schools.com/sql/"},
+                {"label": "SQL Exercises", "url": "https://sqlzoo.net/"}
+            ],
+            "DBMS": [
+                {"label": "DBMS Concepts", "url": "https://www.geeksforgeeks.org/dbms/"},
+                {"label": "Normalization in DBMS", "url": "https://www.javatpoint.com/dbms-normalization"}
+            ],
+            "OS": [
+                {"label": "Operating Systems Guide", "url": "https://www.geeksforgeeks.org/operating-systems/"},
+                {"label": "OS Interview Questions", "url": "https://www.javatpoint.com/os-interview-questions"}
+            ],
+            "Data Structures": [
+                {"label": "Data Structures Tutorial", "url": "https://www.geeksforgeeks.org/data-structures/"},
+                {"label": "DS & Algo Course", "url": "https://www.coursera.org/specializations/data-structures-algorithms"}
+            ],
+            "Algorithms": [
+                {"label": "Algorithms Guide", "url": "https://www.geeksforgeeks.org/fundamentals-of-algorithms/"},
+                {"label": "LeetCode Patterns", "url": "https://sebastiandeb.github.io/leetcode-patterns/"}
+            ],
+            "Networking": [
+                {"label": "Computer Networks", "url": "https://www.geeksforgeeks.org/computer-network-tutorials/"},
+                {"label": "OSI Model Guide", "url": "https://www.cloudflare.com/learning/ddos/glossary/open-systems-interconnection-model-osi/"}
+            ],
+            "Oops": [
+                {"label": "OOP Concepts in Java", "url": "https://www.geeksforgeeks.org/object-oriented-programming-in-java/"},
+                {"label": "OOP Fundamentals", "url": "https://realpython.com/python3-object-oriented-programming/"}
+            ],
+            "C++": [
+                {"label": "C++ Tutorial", "url": "https://www.w3schools.com/cpp/"},
+                {"label": "C++ Programming", "url": "https://www.geeksforgeeks.org/cpp-programming-language/"}
+            ],
+            "React": [
+                {"label": "React Docs", "url": "https://react.dev/"},
+                {"label": "React Tutorial", "url": "https://www.w3schools.com/react/"}
+            ],
+            "Node": [
+                {"label": "Node.js Guide", "url": "https://nodejs.org/en/docs/guides/"},
+                {"label": "Node.js Express Tutorial", "url": "https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs"}
+            ],
+            "WebRTC": [
+                {"label": "WebRTC.org Guide", "url": "https://webrtc.org/getting-started/overview"},
+                {"label": "WebRTC Tutorial (MDN)", "url": "https://developer.mozilla.org/en-US/docs/Web/API/WebRTC_API/Protocols"}
+            ],
+            "API": [
+                {"label": "What is an API?", "url": "https://www.redhat.com/en/topics/api/what-are-interface-apis"},
+                {"label": "Rest API Tutorial", "url": "https://restfulapi.net/"}
+            ],
+            "REST": [
+                {"label": "RESTful Web Services", "url": "https://www.geeksforgeeks.org/rest-restful-web-services/"},
+                {"label": "Rest API Design", "url": "https://learn.microsoft.com/en-us/azure/architecture/best-practices/api-design"}
+            ],
+            "Frontend": [
+                {"label": "Frontend Handbook", "url": "https://frontendmasters.com/guides/front-end-handbook/2019/"},
+                {"label": "Web Development Path", "url": "https://roadmap.sh/frontend"}
+            ],
+            "Backend": [
+                {"label": "Backend Roadmap", "url": "https://roadmap.sh/backend"},
+                {"label": "Backend Development Guide", "url": "https://www.geeksforgeeks.org/backend-development/"}
+            ]
+        }
+        
+        # Normalized lookup
+        normalized_topic = topic.strip().capitalize()
+        if "data structure" in topic.lower(): normalized_topic = "Data Structures"
+        if "algo" in topic.lower(): normalized_topic = "Algorithms"
+        if "sql" in topic.lower(): normalized_topic = "SQL"
+        if "dbms" in topic.lower(): normalized_topic = "DBMS"
+        if "networking" in topic.lower(): normalized_topic = "Networking"
+
+        links = referral_map.get(normalized_topic, [])
+        if not links:
+            # Default fallback for unknown topics
+            links = [{"label": f"Study {topic} on GFG", "url": f"https://www.google.com/search?q=geeksforgeeks+{topic.replace(' ', '+')}"}]
+        
+        return links
+
+    @staticmethod
+    def _extract_technical_questions_with_metadata(text: str) -> List[Dict[str, Any]]:
+        """
+        Identify technical questions using NLP segmentation and Zero-Shot Classification.
+        This provides much higher accuracy than regex-based methods.
+        """
+        try:
+            with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                f.write("\n" + "="*50 + "\n")
+                f.write(f"ADVANCED NLP EXTRACTION START. Text length: {len(text)}\n")
+        except: pass
+
+        nlp = AIService.get_spacy_nlp()
+        if not nlp:
+            # Fallback to simple split if spacy fails
+            sentences = [s.strip() for s in text.split('\n') if len(s.strip()) > 15]
+        else:
+            # Use spaCy for intelligent sentence boundary detection
+            # Truncate to avoid memory issues with huge texts
+            doc = nlp(text[:50000]) 
+            sentences = [sent.text.strip() for sent in doc.sents if len(sent.text.strip()) > 20]
+
+        extracted_raw = []
+        
+        # Candidate labels for the Zero-Shot Classifier
+        FILTER_LABELS = ["technical interview question", "behavioral or hr question", "interview process information", "personal feedback or noise"]
+        
+        TOPIC_LABELS = [
+            "Data Structures & Algorithms", "OOPS & Design Patterns", "DBMS & SQL", 
+            "Operating Systems", "Computer Networks", "Java Programming", 
+            "Python Programming", "Frontend Web Development", "Backend Development",
+            "Recursion & Logic"
+        ]
+
+        # Heuristic pre-filter to speed up by skipping sentences that definitely aren't questions
+        q_starters = ["what", "how", "explain", "give", "define", "can", "write", "given", "describe", "which", "difference"]
+        
+        from app.services.ml_service import MLService
+        
+        count = 0
+        for sent in sentences:
+            sent_low = sent.lower()
+            # Heuristic Pre-filter: Must look like a question/task or contain technical keywords
+            is_potential = any(sent_low.startswith(s) for s in q_starters) or '?' in sent or len(sent.split()) > 10
+            if not is_potential:
+                continue
+            
+            # Phase 1: Filter Technical vs Behavioral using Zero-Shot
+            classification = MLService.classify_text(sent, FILTER_LABELS)
+            if not classification or not classification["labels"]:
+                continue
+                
+            top_label = classification["labels"][0]
+            top_score = classification["scores"][0]
+            
+            # Reject if it's behavioral or noise
+            if top_label != "technical interview question" or top_score < 0.4:
+                continue
+            
+            # Phase 2: Map to Technical Topic
+            topic_classification = MLService.classify_text(sent, TOPIC_LABELS)
+            q_topic = "General Technical"
+            if topic_classification and topic_classification["labels"]:
+                q_topic = topic_classification["labels"][0]
+            
+            # Clean up the question text (remove dots, extra spaces)
+            clean_sent = sent.replace('\n', ' ').strip()
+            
+            # Phase 3: Add to results
+            extracted_raw.append({
+                "question": clean_sent,
+                "topic": q_topic,
+                "referral_links": AIService._get_topic_referral_links(q_topic)
+            })
+            count += 1
+            if count >= 35: break # Safety limit
+
+        # Deduplicate results
+        unique_qs = []
+        seen_norm = set()
+        for q in extracted_raw:
+            norm = "".join(filter(str.isalnum, q['question'].lower()))
+            if norm not in seen_norm:
+                unique_qs.append(q)
+                seen_norm.add(norm)
+        
+        try:
+            with open(r"d:\Upskill_github\Upskill\backend\absolute_debug.log", "a", encoding="utf-8") as f:
+                f.write(f"ADVANCED NLP COMPLETED. Unique Questions Found: {len(unique_qs)}\n")
+                for uq in unique_qs:
+                    f.write(f" - [{uq['topic']}] {uq['question'][:100]}...\n")
+                f.write("="*50 + "\n")
+        except: pass
+
+        return unique_qs[:20]
+
+    @staticmethod
+    def _is_valid_technical_question(q_text: str, found_topic: bool) -> bool:
+        """Legacy helper - now handled by ML in _extract_technical_questions_with_metadata"""
+        return True # Default to True as the new logic handles filtering
 
     @staticmethod
     def _is_meaningful(text: str) -> bool:

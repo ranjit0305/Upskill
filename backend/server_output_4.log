@@ -1,0 +1,42 @@
+Starting Upskill Backend Server...
+
+Activating virtual environment...
+
+Starting uvicorn server...
+INFO:     Will watch for changes in these directories: ['D:\\Upskill_github\\Upskill\\backend']
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+INFO:     Started reloader process [17812] using WatchFiles
+INFO:     Started server process [25116]
+INFO:     Waiting for application startup.
+INFO:app.main:Starting up application...
+INFO:app.database:Connected to MongoDB: upskill_db
+INFO:app.main:Database connected successfully
+INFO:     Application startup complete.
+
+
+DEBUG: Running from D:\Upskill_github\Upskill\backend\venv\Scripts\python.exe
+DEBUG: sys.path[0:3]: ['D:\\Upskill_github\\Upskill\\backend', 'D:\\Upskill_github\\Upskill\\backend', 'C:\\Users\\Ranjit\\AppData\\Local\\Programs\\Python\\Python311\\python311.zip']
+
+
+INFO:     127.0.0.1:60534 - "GET /health HTTP/1.1" 200 OK
+Traceback (most recent call last):
+  File "D:\Upskill_github\Upskill\backend\app\routers\company.py", line 80, in upload_feedback
+    raw_insights = await DocumentProcessor.process_insights(text)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\Upskill_github\Upskill\backend\app\services\document_processor.py", line 41, in process_insights
+    from app.services.ai_service import AIService
+  File "D:\Upskill_github\Upskill\backend\app\services\ai_service.py", line 5, in <module>
+    from app.services.ml_service import MLService
+  File "D:\Upskill_github\Upskill\backend\app\services\ml_service.py", line 6, in <module>
+    class MLService:
+  File "D:\Upskill_github\Upskill\backend\app\services\ml_service.py", line 62, in MLService
+    def classify_text(text: str, candidate_labels: List[str]) -> Dict[str, Any]:
+                                                   ^^^^
+NameError: name 'List' is not defined
+
+[CRITICAL DEBUG] upload_feedback called for company: 69875c7cf9f6c10cf3003119 with 1 files
+Received upload request: company_id=69875c7cf9f6c10cf3003119, uploader_id=test_admin, file_count=1
+[ERROR] Failed to process 1771784971.988693_1771784459.694956_1771784303.603526_1771784240.761849_1771782646.602822_1771782370.188916_1771782141.645962_1771780138.375734_ZOHO_FB.pdf: name 'List' is not defined
+INFO:     127.0.0.1:53286 - "POST /companies/69875c7cf9f6c10cf3003119/feedback HTTP/1.1" 200 OK
+WARNING:  WatchFiles detected changes in 'app\services\ml_service.py'. Reloading...
+^CTerminate batch job (Y/N)? 

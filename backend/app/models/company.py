@@ -36,9 +36,16 @@ class InterviewFeedback(Document):
     class Settings:
         name = "interview_feedback"
 
+class TechnicalQuestionDetail(BaseModel):
+    """Specific technical question with associated topic and links"""
+    question: str
+    topic: str
+    referral_links: List[Dict[str, str]] = Field(default_factory=list)
+
 class InsightMetadata(BaseModel):
     frequently_asked_questions: List[str] = Field(default_factory=list)
     important_technical_topics: List[str] = Field(default_factory=list)
+    technical_questions: List[TechnicalQuestionDetail] = Field(default_factory=list)
     coding_difficulty: str = "medium"  # easy, medium, hard
     common_mistakes: List[str] = Field(default_factory=list)
     preparation_tips: List[str] = Field(default_factory=list)

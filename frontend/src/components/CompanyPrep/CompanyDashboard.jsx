@@ -21,6 +21,7 @@ const CompanyDashboard = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [showTechnicalRound, setShowTechnicalRound] = useState(false);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -172,29 +173,6 @@ const CompanyDashboard = () => {
                         </div>
                     </div>
                 </div>
-
-                {/* AI Generated Questions */}
-                <div id="ai-questions-section" className="dashboard-section questions-section card full-width">
-                    <div className="section-title">
-                        <HelpCircle size={20} />
-                        <h3>AI-Generated Practice Questions</h3>
-                    </div>
-                    <div className="generated-questions-list">
-                        {data.generated_questions && data.generated_questions.length > 0 ? (
-                            data.generated_questions.map((q, idx) => (
-                                <div key={idx} className="generated-q-card">
-                                    <p className="q-text"><strong>Q:</strong> {q.question}</p>
-                                    <div className="q-meta">
-                                        <span className={`difficulty ${q.difficulty}`}>{q.difficulty}</span>
-                                        <span className="category">{q.category}</span>
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <p className="empty-msg">Upload more feedback documents to generate adaptive practice questions.</p>
-                        )}
-                    </div>
-                </div>
             </div>
 
             <div className="cta-section">
@@ -243,7 +221,17 @@ const CompanyDashboard = () => {
                         </div>
                     </button>
 
-                    <button className="btn btn-outline btn-round" onClick={() => navigate('/assessments')}>
+                    <button
+                        className={`btn btn-round ${showTechnicalRound ? 'btn-primary' : 'btn-outline'}`}
+                        onClick={() => {
+                            setShowTechnicalRound(!showTechnicalRound);
+                            if (!showTechnicalRound) {
+                                setTimeout(() => {
+                                    document.getElementById('technical-round-details')?.scrollIntoView({ behavior: 'smooth' });
+                                }, 100);
+                            }
+                        }}
+                    >
                         <div className="btn-content">
                             <span className="round-name">Technical Round</span>
                             <span className="round-meta">20 Questions • 30 Mins</span>
@@ -251,6 +239,77 @@ const CompanyDashboard = () => {
                     </button>
                 </div>
             </div>
+
+            {showTechnicalRound && (
+                <div id="technical-round-details" className="dashboard-section questions-section card full-width technical-round-overlay">
+                    <div className="section-title">
+                        <BookOpen size={20} />
+                        <h3>Technical Round Preparation</h3>
+                        <button className="btn-close-mini" onClick={() => setShowTechnicalRound(false)}>Close</button>
+                    </div>
+
+                    {/* Extracted Conceptual Questions */}
+                    {insights?.insights.technical_questions && insights.insights.technical_questions.length > 0 && (
+                        <div className="tech-questions-section-inner">
+                            <h4 className="sub-section-title">Feedback-Based Conceptual Questions</h4>
+                            <div className="tech-questions-grid">
+                                {insights.insights.technical_questions.map((item, qIdx) => (
+                                    <div key={qIdx} className="tech-q-card">
+                                        <div className="tech-q-header">
+                                            <span className="topic-tag">{item.topic}</span>
+                                        </div>
+                                        <p className="tech-q-text">{item.question}</p>
+                                        <div className="referral-links">
+                                            <span className="links-label">Study Materials:</span>
+                                            <div className="links-list">
+                                                {item.referral_links.map((link, lIdx) => (
+                                                    <a
+                                                        key={lIdx}
+                                                        href={link.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="ref-link"
+                                                    >
+                                                        {link.label}
+                                                    </a>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* AI Generated MCQs */}
+                    <div className="generated-questions-section-inner" style={{ marginTop: '2rem' }}>
+                        <h4 className="sub-section-title">Technical Practice MCQs</h4>
+                        <div className="generated-questions-list">
+                            {data.generated_questions && data.generated_questions.length > 0 ? (
+                                data.generated_questions.map((q, idx) => (
+                                    q.type === "technical" && (
+                                        <div key={idx} className="generated-q-card">
+                                            <p className="q-text"><strong>Q:</strong> {q.question}</p>
+                                            <div className="q-meta">
+                                                <span className={`difficulty ${q.difficulty}`}>{q.difficulty}</span>
+                                                <span className="category">{q.category}</span>
+                                            </div>
+                                        </div>
+                                    )
+                                ))
+                            ) : (
+                                <p className="empty-msg">No technical practice questions available yet.</p>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="round-actions">
+                        <button className="btn btn-primary" onClick={() => navigate('/assessments')}>
+                            Start Technical Assessment
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
