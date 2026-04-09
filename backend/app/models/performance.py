@@ -20,6 +20,15 @@ class HistoryEntry(BaseModel):
     accuracy: float
 
 
+class TopicPerformance(BaseModel):
+    """Performance metrics for a specific topic/category"""
+    topic: str
+    accuracy: float = 0.0
+    total_questions: int = 0
+    correct_answers: int = 0
+    updated_at: datetime = Field(default_factory=datetime.utcnow)
+
+
 class Performance(Document):
     """Performance tracking model"""
     
@@ -27,6 +36,7 @@ class Performance(Document):
     category: str  # "overall", "aptitude", "technical", "coding"
     metrics: PerformanceMetrics = Field(default_factory=PerformanceMetrics)
     history: List[HistoryEntry] = Field(default_factory=list)
+    topic_performance: List[TopicPerformance] = Field(default_factory=list)
     weak_topics: List[str] = Field(default_factory=list)
     strong_topics: List[str] = Field(default_factory=list)
     updated_at: datetime = Field(default_factory=datetime.utcnow)

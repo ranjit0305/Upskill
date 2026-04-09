@@ -15,6 +15,7 @@ const AssessmentView = () => {
     const [loading, setLoading] = useState(true);
     const [submitting, setSubmitting] = useState(false);
     const [result, setResult] = useState(null);
+    const [showExplanations, setShowExplanations] = useState({});
 
     const fetchAssessmentData = useCallback(async () => {
         try {
@@ -151,22 +152,52 @@ const AssessmentView = () => {
                         <div className="question-text">
                             {currentQuestion.question}
                         </div>
-                        <div className="options-list">
-                            {currentQuestion.options?.map((option, idx) => {
-                                const letter = String.fromCharCode(65 + idx);
-                                const isSelected = userAnswers[currentQuestion.id] === option;
-                                return (
-                                    <div
-                                        key={idx}
-                                        className={`option-item ${isSelected ? 'selected' : ''}`}
-                                        onClick={() => handleOptionSelect(currentQuestion.id, option)}
-                                    >
-                                        <div className="option-letter">{letter}</div>
-                                        <div className="option-text">{option}</div>
+                        {(!currentQuestion.options || currentQuestion.options.length === 0) ? (
+                            <div className="subjective-component">
+                                <div className="card subjective-card">
+                                    <div className="subjective-header">
+                                        <AlertTriangle size={18} />
+                                        <span>This is an open-ended/behavioral question.</span>
                                     </div>
-                                );
-                            })}
-                        </div>
+                                    <p className="subjective-prompt">
+                                        Prepare your response mentally or write it down. Focus on your specific experiences and results.
+                                    </p>
+                                    <button 
+                                        className="btn btn-outline btn-sm"
+                                        onClick={() => setShowExplanations(prev => ({
+                                            ...prev,
+                                            [currentQuestion.id]: !prev[currentQuestion.id]
+                                        }))}
+                                    >
+                                        {showExplanations[currentQuestion.id] ? "Hide Guide" : "Show Model Answer / Guide"}
+                                    </button>
+                                    
+                                    {showExplanations[currentQuestion.id] && (
+                                        <div className="explanation-box animate-fade-in">
+                                            <strong>Model Answer / Approach:</strong>
+                                            <p>{currentQuestion.explanation || "No specific guide provided for this question."}</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="options-list">
+                                {currentQuestion.options?.map((option, idx) => {
+                                    const letter = String.fromCharCode(65 + idx);
+                                    const isSelected = userAnswers[currentQuestion.id] === option;
+                                    return (
+                                        <div
+                                            key={idx}
+                                            className={`option-item ${isSelected ? 'selected' : ''}`}
+                                            onClick={() => handleOptionSelect(currentQuestion.id, option)}
+                                        >
+                                            <div className="option-letter">{letter}</div>
+                                            <div className="option-text">{option}</div>
+                                        </div>
+                                    );
+                                })}
+                            </div>
+                        )}
                     </>
                 ) : (
                     <div className="error-message">

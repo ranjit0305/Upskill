@@ -1,0 +1,220 @@
+﻿
+===== COMPANIES =====
+  ID: 698ac096cfa7e5164fc53597  Name: zoho nwe  Rounds: []
+  ID: 6999ddda05dccabeb542db93  Name: zo  Rounds: []
+  ID: 69d47f1e6c555bed68ed187d  Name: DE Shaw  Rounds: []
+  ID: 69d4828141ec1b46f82cd5af  Name: testasdas  Rounds: []
+  ID: 69d48d11a3fda9613d2b1962  Name: Dummy  Rounds: []
+
+===== COMPANY INSIGHTS =====
+  company_id: 698045dfbec872713466d484
+  rounds_summary count: 9
+    - Round 1: Online Assessment: Platform: Offline 
+ 
+Round details: General and Technical Aptitude 
+ 
+Areas cove...
+    - Round 2: Coding Assessment: Platform: Offline 
+ 
+Round details: Face to Face Interview 
+ 
+Areas covered : Ar...
+    - Round 3: Coding Assessment: Platform: Offline 
+ 
+Round details: Face to Face interview 
+ 
+Areas covered: Rec...
+    - Round 4: Online Assessment: Platform: Offline 
+ 
+Round details: Face to Face interview 
+ 
+Areas covered: Mat...
+    - Round 5: HR Interview: General hr 
+ 
+ 
+Platform: Zoho meet 
+ 
+Round details: HR Round 
+ 
+Your Comments:...
+    - Coding Round: Coding Assessment: Math, Arrays 
+ 
+Your Comments:  
+There were 7 coding questions given and we can ...
+    - Hr Round: Technical Interview: Puzzles  
+ 
+Your Comments: 
+This is a medium difficulty round. They asked some t...
+    - Technical Round: Technical Interview: OOPS concepts and data structures. 
+ 
+Your Comments: 
+ 
+Technical questions base...
+    - Technical Interview: Technical Interview: ) 
+ 
+Round details: This is a technical interview; it starts from your projects ...
+
+  company_id: 69875ce4f9f6c10cf300311a
+  rounds_summary count: 4
+    - Round 1: Online Assessment: Online Assessment: Online Assessment: Online Assessment: Online Assessment: Onli...
+    - Round 2: Coding Assessment: Coding Assessment: Coding Assessment: Coding Assessment: Coding Assessment: Codi...
+    - Round 3: HR Interview: HR Interview: HR Interview: HR Interview: HR Interview: HR Interview: Areas cove...
+    - Round 4: Technical Interview: Technical Interview: Technical Interview: Technical Interview: Technical Intervi...
+
+  company_id: 69875c7cf9f6c10cf3003119
+  rounds_summary count: 4
+    - Online Assessment: This Online Assessment is usually conducted platform used....
+    - Coding Assessment: This Coding Assessment is usually conducted java/c++. Key evaluation areas inclu...
+    - Technical Interview: The Technical Interview represents a key phase in the evaluation process. During...
+    - HR Interview: This HR Interview is usually conducted very friendly and they kept me comfortabl...
+
+  company_id: 69877c0f3653cb7fbc068803
+  rounds_summary count: 4
+    - Online Assessment: The Online Assessment represents a key phase in the evaluation process. The asse...
+    - Coding Assessment: This Coding Assessment is usually conducted linked list, arrays, bit manipulatio...
+    - Technical Interview: This Technical Interview is usually conducted practice coding daily. Key evaluat...
+    - HR Interview: This HR Interview is usually conducted . Discussions primarily center around . C...
+
+  company_id: 698abc4fcfa7e5164fc53591
+  rounds_summary count: 4
+    - Online Assessment: The Online Assessment represents a key phase in the evaluation process. The asse...
+    - Coding Assessment: This Coding Assessment is usually conducted linked list, arrays, bit manipulatio...
+    - Technical Interview: This Technical Interview is usually conducted practice coding daily. Key evaluat...
+    - HR Interview: This HR Interview is usually conducted . Discussions primarily center around . C...
+
+  company_id: 6999ddda05dccabeb542db93
+  rounds_summary count: 4
+    - Online Assessment: This Online Assessment is usually conducted derive the output of the code. The a...
+    - Coding Assessment: This Coding Assessment is usually conducted linked list, arrays, bit manipulatio...
+    - Technical Interview: This Technical Interview is usually conducted explain everything in a detailed w...
+    - HR Interview: The HR Interview represents a key phase in the evaluation process. Discussions p...
+
+  company_id: 69ce88848b4677b750612d1a
+  rounds_summary count: 4
+    - Online Assessment: The Online Assessment at DE Shaw typically includes aptitude questions covering ...
+    - Technical Interview 1: The first technical interview focuses on core CS fundamentals including Data Str...
+    - Technical Interview 2: The second technical round dives deeper into System Design, problem-solving, and...
+    - HR Interview: The HR round covers behavioral questions, salary expectations, and cultural fit....
+
+  company_id: 69d47f1e6c555bed68ed187d
+  rounds_summary count: 3
+    - Round 1: Online Coding: The first round typically consists of 2-3 hard algorithmic challenges focusing o...
+    - Round 2: Technical Interview: Deep dive into data structures, system design, and core CS fundamentals (OS, DBM...
+    - Round 3: HR Interview: Behavioral questions, cultural fit assessment, and discussions about past projec...
+
+  company_id: 69d4828141ec1b46f82cd5af
+  rounds_summary count: 4
+    - Online Assessment: Initial screening covering quantitative aptitude, logical reasoning, and verbal ...
+    - Coding Assessment: Problem-solving round using data structures and algorithms. Practice on platform...
+    - Technical Interview: In-depth discussion on core CS subjects (DBMS, OS, Networking, OOP) and your pro...
+    - HR Interview: Final round assessing communication, culture fit, and salary/joining expectation...
+
+  company_id: 69d48d11a3fda9613d2b1962
+  rounds_summary count: 4
+    - Online Assessment: Initial screening covering quantitative aptitude, logical reasoning, and verbal ...
+    - Coding Assessment: Problem-solving round using data structures and algorithms. Practice on platform...
+    - Technical Interview: In-depth discussion on core CS subjects (DBMS, OS, Networking, OOP) and your pro...
+    - HR Interview: Final round assessing communication, culture fit, and salary/joining expectation...
+
+
+===== INTERVIEW FEEDBACKS =====
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2 (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO - PDF2.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK_ZOHO (1).pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: ZOHO_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: Zoho_P2_FB.pdf  status: processed  has_text: True
+  company_id: 698045dfbec872713466d484  file: STUDENTS FEEDBACK - ZOHO (1).pdf  status: processed  has_text: True

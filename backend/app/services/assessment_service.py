@@ -8,6 +8,9 @@ from app.services.performance_service import PerformanceService
 
 class AssessmentService:
     """Assessment service for managing questions and tests"""
+    COMPANY_APTITUDE_TARGET = 20
+    COMPANY_TECHNICAL_TARGET = 20
+    COMPANY_CODING_TARGET = 4
     
     @staticmethod
     async def create_question(question_data: QuestionCreate, created_by: str) -> Question:
@@ -92,10 +95,10 @@ class AssessmentService:
         # Get assessment
         assessment = await AssessmentService.get_assessment(submission_data.assessment_id)
         
-        # Get all questions
-        questions = await Question.find(
-            {"_id": {"$in": assessment.questions}}
-        ).to_list()
+        # Get all questions using ObjectIds for correctness
+        from bson import ObjectId
+        question_ids = [ObjectId(qid) for qid in assessment.questions if ObjectId.is_valid(qid)]
+        questions = await Question.find({"_id": {"$in": question_ids}}).to_list()
         
         question_map = {str(q.id): q for q in questions}
         
@@ -105,14 +108,16 @@ class AssessmentService:
         mcq_total_count = 0
         coding_points = 0.0
         coding_total_count = 0
-        total_time = 0
+        total_time = submission_data.time_taken or 0
+        if total_time == 0:
+            total_time = sum(a.time_taken for a in submission_data.answers)
         
         for answer_data in submission_data.answers:
             question = question_map.get(answer_data.question_id)
             if not question:
                 continue
             
-            total_time += answer_data.time_taken
+            # total_time already calculated
             
             if question.type == QuestionType.CODING:
                 coding_total_count += 1
@@ -249,129 +254,47 @@ class AssessmentService:
     @staticmethod
     async def create_company_aptitude_test(company_id: str, user_id: str) -> Assessment:
         """
-        Dynamically generate or fetch a 50-question Aptitude test for a company.
+        Dynamically generate or fetch an aptitude test using only company-specific generated questions.
         """
-        from app.models.company import Company, CompanyInsights
-        from beanie import PydanticObjectId
-        import random
-
-        # 0. Get company info
+        from app.models.company import Company
         company = await Company.get(company_id)
-        company_name = company.name.lower() if company else company_id.lower()
+        if not company:
+            raise HTTPException(status_code=404, detail="Company not found")
 
-        # 1. Get company topics
-        insights = await CompanyInsights.find_one(CompanyInsights.company_id == company_id)
-        apt_topics = []
-        if insights and insights.insights.important_technical_topics:
-            # Detect aptitude-specific topics from technical topics or overall text
-            # NOTE: We only import AIService if topics are found or we reach critical threshold
-            from app.services.ai_service import AIService
-            all_text = " ".join(insights.insights.important_technical_topics)
-            apt_topics = AIService._extract_aptitude_topics(all_text)
-        
-        if not apt_topics:
-            apt_topics = ["profit_and_loss", "time_and_work", "speed_distance_time", "logical_reasoning", "percentages"]
-
-        # 2. Collect Questions
-        # Priority 1: Questions already tagged with this company ID or Name
-        search_terms = list(set([company_id, company_name]))
-        if "zoho" in company_name:
-            search_terms.append("zoho")
-        
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"Generating aptitude test for {company_name} (ID: {company_id}) using search terms: {search_terms}")
-
-        existing_company_qs = await Question.find({
-            "companies": {"$in": search_terms},
+        final_qs = await Question.find({
+            "companies": {"$in": [company_id]},
+            "tags": {"$in": ["source:feedback", "source:web"]},
             "type": QuestionType.APTITUDE
-        }).to_list()
-        
-        final_qs = existing_company_qs
-        
-        # Priority 2: Questions matching the detected topics
-        if len(final_qs) < 50:
-            topic_qs = await Question.find({
-                "category": {"$in": apt_topics},
-                "type": QuestionType.APTITUDE,
-                "_id": {"$nin": [q.id for q in final_qs]}
-            }).limit(50 - len(final_qs)).to_list()
-            final_qs.extend(topic_qs)
-        
-        # Priority 3: Fallback random aptitude questions
-        if len(final_qs) < 50:
-            fallback_qs = await Question.find({
-                "type": QuestionType.APTITUDE,
-                "_id": {"$nin": [q.id for q in final_qs]}
-            }).limit(50 - len(final_qs)).to_list()
-            final_qs.extend(fallback_qs)
-
-        # 3. If STILL missing or under 50, fill from internal bank using AIService
-        if len(final_qs) < 50:
-            # We use a threshold for AI mass generation, but we always fill from bank
-            for topic in apt_topics:
-                if len(final_qs) >= 50: break
-                from app.services.ai_service import AIService
-                bank = AIService.APTITUDE_QUESTION_BANK.get(topic, [])
-                for q_temp in bank:
-                    if len(final_qs) >= 50: break
-                    # Avoid duplicates
-                    if any(q_temp["text"] == q.question for q in final_qs):
-                         continue
-                         
-                    # Create in DB
-                    new_q = Question(
-                        type=QuestionType.APTITUDE,
-                        category=q_temp["category"],
-                        difficulty=DifficultyLevel.MEDIUM,
-                        question=q_temp["text"],
-                        options=q_temp["options"],
-                        correct_answer=q_temp["correct_answer"],
-                        explanation=q_temp["explanation"],
-                        companies=[company_id, company_name, "zoho"],
-                        is_generated=True,
-                        created_by=user_id
-                    )
-                    await new_q.insert()
-                    final_qs.append(new_q)
-
-        # 3.5 Fallback to AI Generation ONLY if we are still critically low
-        if len(final_qs) < 10:
-             try:
-                 # Only import and run if absolutely necessary (slow)
-                 from app.services.ai_service import AIService
-                 # We need some text for feedback, if no feedback exists, we can't do this
-                 # For now, we rely on the bank which is already processed above
-                 pass 
-             except:
-                 pass
+        }).sort(-Question.created_at).to_list()
 
         if not final_qs:
-             raise HTTPException(status_code=404, detail="No aptitude questions found in database.")
+            raise HTTPException(
+                status_code=404,
+                detail="No company-specific aptitude questions available yet. Upload feedback or sync interview experiences first."
+            )
 
         # 4. Create/Get the Assessment
-        # Use a more stable title
-        test_title = f"{company_id} Aptitude mock test"
-        # Try to find if we already have a generated test for this company
         existing_test = await Assessment.find_one({
             "type": QuestionType.APTITUDE,
             "is_generated": True,
             "description": {"$regex": company_id} 
         })
         
+        selected_questions = final_qs[: min(len(final_qs), AssessmentService.COMPANY_APTITUDE_TARGET)]
         if existing_test:
-            # Update questions to ensure we have the latest/best 50
-            existing_test.questions = [str(q.id) for q in final_qs[:50]]
+            existing_test.questions = [str(q.id) for q in selected_questions]
+            existing_test.total_marks = len(selected_questions)
+            existing_test.duration = max(15, len(selected_questions) * 3)
             await existing_test.save()
             return existing_test
             
         assessment = Assessment(
             title=f"Aptitude Practice Test",
-            description=f"A specialized 50-question aptitude test for {company_id} based on recent patterns.",
+            description=f"A company-specific aptitude test for {company_id} generated from uploaded feedback and synced interview experiences.",
             type=QuestionType.APTITUDE,
-            questions=[str(q.id) for q in final_qs[:50]],
-            duration=60,
-            total_marks=len(final_qs[:50]),
+            questions=[str(q.id) for q in selected_questions],
+            duration=max(15, len(selected_questions) * 3),
+            total_marks=len(selected_questions),
             difficulty_level=DifficultyLevel.MEDIUM,
             is_generated=True,
             created_by=user_id
@@ -406,71 +329,24 @@ class AssessmentService:
     @staticmethod
     async def create_company_coding_test(company_id: str, user_id: str) -> Assessment:
         """
-        Dynamically generate or fetch a coding test for a company.
+        Dynamically generate or fetch a coding test using only company-specific generated questions.
         """
-        from app.models.company import Company, CompanyInsights
-        from app.services.ai_service import AIService
-        import random
-
-        # 0. Get company info
+        from app.models.company import Company
         company = await Company.get(company_id)
-        company_name = company.name.lower() if company else company_id.lower()
+        if not company:
+            raise HTTPException(status_code=404, detail="Company not found")
 
-        # 1. Get company coding topics
-        insights = await CompanyInsights.find_one(CompanyInsights.company_id == company_id)
-        coding_topics = []
-        if insights and insights.insights.important_technical_topics:
-            all_text = " ".join(insights.insights.important_technical_topics)
-            coding_topics = AIService._extract_coding_topics(all_text)
-        
-        if not coding_topics:
-            coding_topics = ["arrays", "strings", "linked_list"]
-
-        # 2. Collect Coding Questions
-        search_terms = list(set([company_id, company_name]))
-        
-        existing_company_qs = await Question.find({
-            "companies": {"$in": search_terms},
+        final_qs = await Question.find({
+            "companies": {"$in": [company_id]},
+            "tags": {"$in": ["source:feedback", "source:web"]},
             "type": QuestionType.CODING
-        }).to_list()
-        
-        final_qs = existing_company_qs
-        
-        # Priority 2: Questions matching the detected topics
-        if len(final_qs) < 5:
-            topic_qs = await Question.find({
-                "category": {"$in": coding_topics},
-                "type": QuestionType.CODING,
-                "_id": {"$nin": [q.id for q in final_qs]}
-            }).limit(5 - len(final_qs)).to_list()
-            final_qs.extend(topic_qs)
-        
-        # Priority 3: Fallback from AIService Bank
-        if len(final_qs) < 5:
-            for topic in coding_topics:
-                if len(final_qs) >= 5: break
-                bank = AIService.CODING_QUESTION_BANK.get(topic, [])
-                for q_temp in bank:
-                    if len(final_qs) >= 5: break
-                    new_q = Question(
-                        type=QuestionType.CODING,
-                        category=topic,
-                        difficulty=q_temp["difficulty"],
-                        question=q_temp["description"],
-                        test_cases=q_temp["test_cases"],
-                        sample_input=q_temp.get("sample_input"),
-                        sample_output=q_temp.get("sample_output"),
-                        companies=[company_id, company_name],
-                        is_generated=True,
-                        created_by=user_id,
-                        correct_answer="Check test cases",
-                        explanation=f"Problem: {q_temp['title']}"
-                    )
-                    await new_q.insert()
-                    final_qs.append(new_q)
+        }).sort(-Question.created_at).to_list()
 
         if not final_qs:
-             raise HTTPException(status_code=404, detail="No coding questions found.")
+            raise HTTPException(
+                status_code=404,
+                detail="No company-specific coding questions available yet. Upload feedback or sync interview experiences first."
+            )
 
         # 3. Create/Get the Assessment
         existing_test = await Assessment.find_one({
@@ -479,19 +355,75 @@ class AssessmentService:
             "description": {"$regex": company_id} 
         })
         
-        q_ids = [str(q.id) for q in final_qs[:5]]
+        selected_questions = final_qs[: min(len(final_qs), AssessmentService.COMPANY_CODING_TARGET)]
+        q_ids = [str(q.id) for q in selected_questions]
 
         if existing_test:
             existing_test.questions = q_ids
+            existing_test.total_marks = len(q_ids)
+            existing_test.duration = max(30, len(q_ids) * 20)
             await existing_test.save()
             return existing_test
             
         assessment = Assessment(
             title=f"Coding Assessment",
-            description=f"A specialized coding test for {company_id} based on recent patterns.",
+            description=f"A company-specific coding test for {company_id} generated from uploaded feedback and synced interview experiences.",
             type=QuestionType.CODING,
             questions=q_ids,
-            duration=90,
+            duration=max(30, len(q_ids) * 20),
+            total_marks=len(q_ids),
+            difficulty_level=DifficultyLevel.MEDIUM,
+            is_generated=True,
+            created_by=user_id
+        )
+        await assessment.insert()
+        return assessment
+
+    @staticmethod
+    async def create_company_technical_test(company_id: str, user_id: str) -> Assessment:
+        """
+        Dynamically generate or fetch a technical test using only company-specific generated questions.
+        """
+        from app.models.company import Company
+        company = await Company.get(company_id)
+        if not company:
+            raise HTTPException(status_code=404, detail="Company not found")
+
+        final_qs = await Question.find({
+            "companies": {"$in": [company_id]},
+            "tags": {"$in": ["source:feedback", "source:web"]},
+            "type": QuestionType.TECHNICAL
+        }).sort(-Question.created_at).to_list()
+
+        if not final_qs:
+            raise HTTPException(
+                status_code=404,
+                detail="No company-specific technical questions available yet. Upload feedback or sync interview experiences first."
+            )
+
+        # 3. Create/Get the Assessment
+        existing_test = await Assessment.find_one({
+            "type": QuestionType.TECHNICAL,
+            "is_generated": True,
+            "description": {"$regex": company_id} 
+        })
+        
+        selected_questions = final_qs[: min(len(final_qs), AssessmentService.COMPANY_TECHNICAL_TARGET)]
+        q_ids = [str(q.id) for q in selected_questions]
+
+        if existing_test:
+            existing_test.questions = q_ids
+            existing_test.total_marks = len(q_ids)
+            existing_test.duration = max(15, len(q_ids) * 2)
+            await existing_test.save()
+            return existing_test
+            
+        assessment = Assessment(
+            title=f"Technical Assessment",
+            description=f"A company-specific technical test for {company_id} generated from uploaded feedback and synced interview experiences.",
+            type=QuestionType.TECHNICAL,
+            questions=q_ids,
+            duration=max(15, len(q_ids) * 2),
             total_marks=len(q_ids),
             difficulty_level=DifficultyLevel.MEDIUM,
             is_generated=True,

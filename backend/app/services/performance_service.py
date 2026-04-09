@@ -11,6 +11,8 @@ class PerformanceService:
     @staticmethod
     async def update_performance(user_id: str, submission: Submission):
         """Update performance metrics after a submission"""
+        from app.models.assessment import Question
+        
         # Get or create performance record
         performance = await Performance.find_one(Performance.user_id == user_id)
         
@@ -20,7 +22,7 @@ class PerformanceService:
                 category="overall"
             )
         
-        # Update metrics
+        # Update overall metrics
         performance.metrics.total_attempts += 1
         
         # Add to history
@@ -30,6 +32,54 @@ class PerformanceService:
             accuracy=submission.accuracy
         ))
         
+        # Topic-wise performance update
+        question_ids = [a.question_id for a in submission.answers]
+        
+        from bson import ObjectId
+        obj_ids = [ObjectId(qid) for qid in question_ids if ObjectId.is_valid(qid)]
+        questions = await Question.find({"_id": {"$in": obj_ids}}).to_list()
+        
+        question_map = {str(q.id): q for q in questions}
+        
+        topic_counts = {} # topic -> {total, correct}
+        
+        for answer in submission.answers:
+            q = question_map.get(answer.question_id)
+            if not q:
+                continue
+                
+            topic = q.category
+            if topic not in topic_counts:
+                topic_counts[topic] = {"total": 0, "correct": 0}
+            
+            topic_counts[topic]["total"] += 1
+            if answer.is_correct:
+                topic_counts[topic]["correct"] += 1
+        
+        # Update performance.topic_performance
+        for topic, counts in topic_counts.items():
+            # Find existing topic performance or create new
+            tp = next((x for x in performance.topic_performance if x.topic == topic), None)
+            if not tp:
+                from app.models.performance import TopicPerformance
+                tp = TopicPerformance(topic=topic)
+                performance.topic_performance.append(tp)
+            
+            tp.total_questions += counts["total"]
+            tp.correct_answers += counts["correct"]
+            tp.accuracy = (tp.correct_answers / tp.total_questions * 100)
+            tp.updated_at = datetime.utcnow()
+        
+        # Update weak and strong topics
+        performance.weak_topics = [
+            tp.topic for tp in performance.topic_performance 
+            if tp.accuracy < 50 and tp.total_questions >= 3
+        ]
+        performance.strong_topics = [
+            tp.topic for tp in performance.topic_performance 
+            if tp.accuracy >= 80 and tp.total_questions >= 3
+        ]
+
         # Calculate average accuracy
         if performance.history:
             accuracies = [h.accuracy for h in performance.history]
@@ -131,8 +181,9 @@ class PerformanceService:
         )
         
         # Generate explanation and recommendations
+        performance = await PerformanceService.get_performance(user_id)
         explanation = PerformanceService._generate_explanation(overall_score, component_scores)
-        recommendations = PerformanceService._generate_recommendations(component_scores)
+        recommendations = PerformanceService._generate_recommendations(component_scores, performance)
         
         # Get or create readiness score
         readiness = await ReadinessScore.find_one(ReadinessScore.user_id == user_id)
@@ -164,24 +215,29 @@ class PerformanceService:
         return f"{level} Your aptitude score is {components.aptitude:.1f}%, technical knowledge is at {components.technical:.1f}%, and coding skills are at {components.coding:.1f}%."
     
     @staticmethod
-    def _generate_recommendations(components: ComponentScore) -> List[str]:
-        """Generate personalized recommendations"""
+    def _generate_recommendations(components: ComponentScore, performance: Optional[Performance] = None) -> List[str]:
+        """Generate personalized recommendations based on component scores and specific weak topics"""
         recommendations = []
         
+        # Topic-specific recommendations
+        if performance and performance.weak_topics:
+            topics_str = ", ".join(performance.weak_topics[:3])
+            recommendations.append(f"Immediate Focus: You're struggling with {topics_str}. Practice more questions from these specific areas.")
+
         if components.aptitude < 60:
-            recommendations.append("Focus on aptitude practice - solve more quantitative and logical reasoning problems")
+            recommendations.append("Aptitude Boost: Focus on Quantitative and Logical reasoning basics.")
         
         if components.technical < 60:
-            recommendations.append("Strengthen technical fundamentals - review OS, DBMS, Networks, and OOP concepts")
+            recommendations.append("Technical Review: Revisit core CS fundamentals like OS, DBMS, and Networking.")
         
         if components.coding < 60:
-            recommendations.append("Improve coding skills - practice data structures and algorithms daily")
+            recommendations.append("Coding Practice: Solve at least 2 problems daily to improve your logic building.")
         
         if components.consistency < 50:
-            recommendations.append("Maintain consistency - practice regularly to build momentum")
+            recommendations.append("Daily Habit: Try to take at least one small quiz every day to improve consistency.")
         
         if not recommendations:
-            recommendations.append("Excellent work! Continue practicing to maintain your performance")
-            recommendations.append("Start focusing on company-specific preparation")
+            recommendations.append("Excellent work! Continue practicing to maintain your performance.")
+            recommendations.append("Level Up: Start solving 'Hard' difficulty problems for your top companies.")
         
         return recommendations

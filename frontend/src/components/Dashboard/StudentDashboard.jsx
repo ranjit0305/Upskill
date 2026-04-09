@@ -166,6 +166,37 @@ const StudentDashboard = () => {
                     </div>
                 </div>
 
+                {/* Topic-wise Mastery */}
+                <div className="card topic-mastery-card" style={{ marginTop: '2rem' }}>
+                    <h3>Topic-wise Mastery</h3>
+                    <div className="topic-grid">
+                        {performance?.topic_performance?.map((tp, index) => (
+                            <div key={index} className="topic-metric">
+                                <div className="topic-info-row">
+                                    <span className="topic-name">{tp?.topic?.toUpperCase() || 'UNKNOWN'}</span>
+                                    <span className="topic-percentage">{Math.round(tp?.accuracy || 0)}%</span>
+                                </div>
+                                <div className="topic-bar-container">
+                                    <div 
+                                        className="topic-bar" 
+                                        style={{ 
+                                            width: `${tp?.accuracy || 0}%`,
+                                            backgroundColor: getScoreColor(tp?.accuracy || 0)
+                                        }}
+                                    ></div>
+                                </div>
+                                <div className="topic-stats">
+                                    <span>{tp?.correct_answers || 0}/{tp?.total_questions || 0} Correct</span>
+                                    <span>Updated {tp?.updated_at ? new Date(tp.updated_at).toLocaleDateString() : 'N/A'}</span>
+                                </div>
+                            </div>
+                        ))}
+                        {(!performance?.topic_performance || performance.topic_performance.length === 0) && (
+                            <p className="empty-msg">No specific topic data available yet. Take themed tests to see your mastery levels.</p>
+                        )}
+                    </div>
+                </div>
+
                 {/* Action Buttons */}
                 <div className="action-buttons">
                     <button className="btn btn-primary" onClick={() => navigate('/assessments')}>

@@ -285,6 +285,26 @@ async def get_company_coding_test(
     )
 
 
+@router.get("/company/{company_id}/technical", response_model=AssessmentResponse)
+async def get_company_technical_test(
+    company_id: str,
+    current_user = Depends(get_current_user_from_token)
+):
+    """Get or generate a technical MCQ test for a company"""
+    assessment = await AssessmentService.create_company_technical_test(company_id, str(current_user.id))
+    
+    return AssessmentResponse(
+        id=str(assessment.id),
+        title=assessment.title,
+        description=assessment.description,
+        type=assessment.type,
+        duration=assessment.duration,
+        total_marks=assessment.total_marks,
+        difficulty_level=assessment.difficulty_level,
+        question_count=len(assessment.questions)
+    )
+
+
 @router.post("/run", tags=["Coding"])
 async def run_code(
     payload: dict,

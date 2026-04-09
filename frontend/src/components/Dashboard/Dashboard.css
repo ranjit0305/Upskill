@@ -198,6 +198,73 @@
     color: var(--gray);
 }
 
+.topic-mastery-card {
+    padding: 32px;
+    margin-bottom: 32px;
+}
+
+.topic-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 32px;
+    margin-top: 24px;
+}
+
+.topic-metric {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.topic-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topic-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--gray);
+    letter-spacing: 0.5px;
+}
+
+.topic-percentage {
+    font-weight: 700;
+    font-size: 18px;
+    color: var(--dark);
+}
+
+.topic-bar-container {
+    height: 8px;
+    background-color: #e5e7eb;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.topic-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 1s ease-out;
+}
+
+.topic-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--gray);
+}
+
+.empty-msg {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 40px;
+    color: var(--gray);
+    background-color: var(--light-gray);
+    border-radius: 8px;
+    border: 2px dashed #cbd5e1;
+}
+
 @media (max-width: 768px) {
     .score-main {
         flex-direction: column;
@@ -208,7 +275,11 @@
         grid-template-columns: 1fr;
     }
 
+    .topic-grid {
+        grid-template-columns: 1fr;
+    }
+
     .action-buttons {
         flex-direction: column;
     }
-}
+}

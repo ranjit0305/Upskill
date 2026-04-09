@@ -30,6 +30,7 @@ async def get_my_performance(current_user = Depends(get_current_user_from_token)
                 consistency_score=0.0,
                 improvement_rate=0.0
             ),
+            topic_performance=[],
             weak_topics=[],
             strong_topics=[],
             updated_at=""
@@ -44,6 +45,16 @@ async def get_my_performance(current_user = Depends(get_current_user_from_token)
             consistency_score=performance.metrics.consistency_score,
             improvement_rate=performance.metrics.improvement_rate
         ),
+        topic_performance=[
+            TopicPerformanceResponse(
+                topic=tp.topic,
+                accuracy=tp.accuracy,
+                total_questions=tp.total_questions,
+                correct_answers=tp.correct_answers,
+                updated_at=tp.updated_at.isoformat()
+            )
+            for tp in performance.topic_performance
+        ],
         weak_topics=performance.weak_topics,
         strong_topics=performance.strong_topics,
         updated_at=performance.updated_at.isoformat()

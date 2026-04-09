@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
 
 // Create axios instance
 const api = axios.create({
@@ -65,6 +65,7 @@ export const assessmentAPI = {
     getAssessmentQuestions: (id) => api.get(`/assessment/${id}/questions`),
     getCompanyAptitudeTest: (companyId) => api.get(`/assessment/company/${companyId}/aptitude`),
     getCompanyCodingTest: (companyId) => api.get(`/assessment/company/${companyId}/coding`),
+    getCompanyTechnicalTest: (companyId) => api.get(`/assessment/company/${companyId}/technical`),
     runCode: (data) => api.post('/assessment/run', data),
     submitQuestionAnswer: (assessmentId, questionId, data) => api.post(`/assessment/${assessmentId}/question/${questionId}/submit`, data),
     deleteQuestion: (id) => api.delete(`/assessment/questions/${id}`),
@@ -89,6 +90,8 @@ export const companyAPI = {
     createCompany: (data) => api.post('/companies', data),
     getDashboard: (companyId, userId) => api.get(`/companies/${companyId}/dashboard`, { params: { user_id: userId } }),
     uploadFeedback: (companyId, formData) => api.post(`/companies/${companyId}/feedback`, formData),
+    syncOnlineQuestions: (companyId, urls) => api.post(`/companies/${companyId}/sync-online`, { urls }),
+    autoSyncQuestions: (companyId) => api.post(`/companies/${companyId}/auto-sync`),
 };
 
 export default api;

@@ -10,6 +10,8 @@ class QuestionType(str, Enum):
     APTITUDE = "aptitude"
     TECHNICAL = "technical"
     CODING = "coding"
+    BEHAVIORAL = "behavioral"
+    SUBJECTIVE = "subjective"
 
 
 class DifficultyLevel(str, Enum):

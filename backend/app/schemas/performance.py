@@ -11,10 +11,20 @@ class PerformanceMetricsResponse(BaseModel):
     improvement_rate: float
 
 
+class TopicPerformanceResponse(BaseModel):
+    """Topic performance response"""
+    topic: str
+    accuracy: float
+    total_questions: int
+    correct_answers: int
+    updated_at: str
+
+
 class PerformanceResponse(BaseModel):
     """Performance response"""
     category: str
     metrics: PerformanceMetricsResponse
+    topic_performance: List[TopicPerformanceResponse]
     weak_topics: List[str]
     strong_topics: List[str]
     updated_at: str

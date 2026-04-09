@@ -1,0 +1,22 @@
+﻿============================================================
+STEP 1: All Companies in DB
+============================================================
+  _id=69ce547d58f8069fa7c55640 | type=<class 'bson.objectid.ObjectId'> | name=SyncTestCorp
+
+============================================================
+STEP 2: All CompanyInsights in DB
+============================================================
+  company_id=69ce88848b1677b750612d1a | type=<class 'str'> | rounds_count=1
+    - Initial Check: Manual test round
+
+============================================================
+STEP 3: DE Shaw specific lookup
+============================================================
+  Find by string '69ce88848b4677b750612d1a': NOT FOUND
+  Find by ObjectId: NOT FOUND
+  Company doc exists: NO
+
+============================================================
+STEP 4: Simulate Dashboard API
+============================================================
+  Beanie Company.get: NOT FOUND

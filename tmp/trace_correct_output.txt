@@ -1,0 +1,88 @@
+﻿============================================================
+STEP 1: All Companies
+============================================================
+  _id=698ac096cfa7e5164fc53597 | name=zoho nwe
+  _id=6999ddda05dccabeb542db93 | name=zo
+  _id=69ce88848b4677b750612d1a | name=DE Shaw
+
+============================================================
+STEP 2: All CompanyInsights
+============================================================
+  company_id=698045dfbec872713466d484 | rounds_count=9
+    - Round 1: Online Assessment: Platform: Offline 
+ 
+Round details: General and Technical Aptitude 
+ 
+Areas cove
+    - Round 2: Coding Assessment: Platform: Offline 
+ 
+Round details: Face to Face Interview 
+ 
+Areas covered : Ar
+    - Round 3: Coding Assessment: Platform: Offline 
+ 
+Round details: Face to Face interview 
+ 
+Areas covered: Rec
+    - Round 4: Online Assessment: Platform: Offline 
+ 
+Round details: Face to Face interview 
+ 
+Areas covered: Mat
+    - Round 5: HR Interview: General hr 
+ 
+ 
+Platform: Zoho meet 
+ 
+Round details: HR Round 
+ 
+Your Comments:
+    - Coding Round: Coding Assessment: Math, Arrays 
+ 
+Your Comments:  
+There were 7 coding questions given and we can 
+    - Hr Round: Technical Interview: Puzzles  
+ 
+Your Comments: 
+This is a medium difficulty round. They asked some t
+    - Technical Round: Technical Interview: OOPS concepts and data structures. 
+ 
+Your Comments: 
+ 
+Technical questions base
+    - Technical Interview: Technical Interview: ) 
+ 
+Round details: This is a technical interview; it starts from your projects 
+  company_id=69875ce4f9f6c10cf300311a | rounds_count=4
+    - Round 1: Online Assessment: Online Assessment: Online Assessment: Online Assessment: Online Assessment: Onli
+    - Round 2: Coding Assessment: Coding Assessment: Coding Assessment: Coding Assessment: Coding Assessment: Codi
+    - Round 3: HR Interview: HR Interview: HR Interview: HR Interview: HR Interview: HR Interview: Areas cove
+    - Round 4: Technical Interview: Technical Interview: Technical Interview: Technical Interview: Technical Intervi
+  company_id=69875c7cf9f6c10cf3003119 | rounds_count=4
+    - Online Assessment: This Online Assessment is usually conducted platform used.
+    - Coding Assessment: This Coding Assessment is usually conducted java/c++. Key evaluation areas inclu
+    - Technical Interview: The Technical Interview represents a key phase in the evaluation process. During
+    - HR Interview: This HR Interview is usually conducted very friendly and they kept me comfortabl
+  company_id=69877c0f3653cb7fbc068803 | rounds_count=4
+    - Online Assessment: The Online Assessment represents a key phase in the evaluation process. The asse
+    - Coding Assessment: This Coding Assessment is usually conducted linked list, arrays, bit manipulatio
+    - Technical Interview: This Technical Interview is usually conducted practice coding daily. Key evaluat
+    - HR Interview: This HR Interview is usually conducted . Discussions primarily center around . C
+  company_id=698abc4fcfa7e5164fc53591 | rounds_count=4
+    - Online Assessment: The Online Assessment represents a key phase in the evaluation process. The asse
+    - Coding Assessment: This Coding Assessment is usually conducted linked list, arrays, bit manipulatio
+    - Technical Interview: This Technical Interview is usually conducted practice coding daily. Key evaluat
+    - HR Interview: This HR Interview is usually conducted . Discussions primarily center around . C
+  company_id=6999ddda05dccabeb542db93 | rounds_count=4
+    - Online Assessment: This Online Assessment is usually conducted platform used.
+    - Coding Assessment: This Coding Assessment is usually conducted draw the design diagram first and th
+    - Technical Interview: This Technical Interview is usually conducted very friendly. Key evaluation area
+    - HR Interview: This HR Interview is usually conducted very friendly and they kept me comfortabl
+
+============================================================
+STEP 3: DE Shaw lookup
+============================================================
+  Company by ObjectId: FOUND - DE Shaw
+  Insights by string '69ce88848b4677b750612d1a': NOT FOUND
+  Company by name 'shaw': FOUND - _id=69ce88848b4677b750612d1a name=DE Shaw
+  Insights for shaw company_id '69ce88848b4677b750612d1a': NOT FOUND

@@ -24,7 +24,11 @@ const Login = () => {
                 navigate('/dashboard');
             }
         } catch (err) {
-            setError(err.response?.data?.detail || 'Login failed. Please try again.');
+            if (!err.response) {
+                setError('Backend server is not reachable. Start the FastAPI server on localhost:8000 and try again.');
+            } else {
+                setError(err.response?.data?.detail || 'Login failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }

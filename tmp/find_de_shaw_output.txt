@@ -1,0 +1,5 @@
+﻿All collections: ['submissions', 'questions', 'assessments', 'company_insights', 'companies', 'users', 'performance', 'readiness_scores']
+
+FOUND '69ce8884' in collection 'company_insights':
+  _id=69ce997c87d6705356ce8d57
+  company_id=69ce88848b1677b750612d1a

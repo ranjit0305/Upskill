@@ -80,6 +80,7 @@ class SubmissionCreate(BaseModel):
     """Schema for creating a submission"""
     assessment_id: str
     answers: List[AnswerSubmit]
+    time_taken: Optional[int] = 0
 
 
 class SubmissionResponse(BaseModel):

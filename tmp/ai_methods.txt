@@ -1,0 +1,24 @@
+﻿13:     def get_spacy_nlp(cls):
+25:     async def analyze_feedback(text: str) -> Dict[str, Any]:
+63:     def _get_topic_referral_links(topic: str) -> List[Dict[str, str]]:
+152:     def _extract_technical_questions_with_metadata(text: str) -> List[Dict[str, Any]]:
+248:     def _is_valid_technical_question(q_text: str, found_topic: bool) -> bool:
+253:     def _is_meaningful(text: str) -> bool:
+265:     def _clean_round_description(text: str, round_name: str = "") -> str:
+354:     def _calculate_overlap(text1: str, text2: str) -> float:
+356:         def normalize(t):
+370:     def _extract_topics_with_ml(text: str) -> List[str]:
+396:     def _extract_and_normalize_rounds(text: str) -> List[Dict[str, str]]:
+572:     def _extract_faqs(text: str) -> List[str]:
+577:     def _extract_topics(text: str) -> List[str]:
+593:     def _detect_difficulty(text: str) -> str:
+601:     def _extract_list(text: str, keywords: List[str]) -> List[str]:
+883:     def _extract_coding_topics(text: str) -> List[str]:
+900:     def _extract_coding_problems_raw(text: str) -> List[str]:
+916:     def _extract_aptitude_topics(text: str) -> List[str]:
+936:     def _extract_technical_topics(text: str) -> List[str]:
+956:     async def extract_questions_from_url(url: str, company_id: str, uploader_id: str) -> List[Dict[str, Any]]:
+971:     def _extract_raw_questions(text: str) -> List[str]:
+991:     async def generate_questions_from_feedback(text: str, company_id: str, uploader_id: str) -> List[Dict[str, Any]]:
+1093:     async def extract_questions_from_url(url: str, company_id: str, uploader_id: str) -> List[Dict[str, Any]]:
+1099:     async def extract_full_insights_from_url(url: str, company_id: str, uploader_id: str) -> Dict[str, Any]:
