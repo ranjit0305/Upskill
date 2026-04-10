@@ -205,6 +205,9 @@ const StudentDashboard = () => {
                     <button className="btn btn-secondary" style={{ backgroundColor: '#4f46e5', color: 'white' }} onClick={() => navigate('/companies')}>
                         Company-Wise Preparation
                     </button>
+                    <button className="btn btn-secondary" style={{ backgroundColor: '#0f766e', color: 'white' }} onClick={() => navigate('/mock-interview')}>
+                        Mock Interview
+                    </button>
                     <button className="btn btn-outline" onClick={() => navigate('/practice')}>
                         Practice Questions
                     </button>

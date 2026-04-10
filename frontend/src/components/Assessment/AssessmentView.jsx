@@ -17,6 +17,12 @@ const AssessmentView = () => {
     const [result, setResult] = useState(null);
     const [showExplanations, setShowExplanations] = useState({});
 
+    const extractCompanyId = (description) => {
+        if (!description) return null;
+        const match = String(description).match(/\bfor\s+([a-f0-9]{24})\b/i);
+        return match ? match[1] : null;
+    };
+
     const fetchAssessmentData = useCallback(async () => {
         try {
             setLoading(true);
@@ -93,6 +99,10 @@ const AssessmentView = () => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+    const companyId = extractCompanyId(assessment?.description);
+    const returnTarget = companyId ? `/company/${companyId}` : '/dashboard';
+    const returnLabel = companyId ? 'Back to Company Dashboard' : 'Back to Dashboard';
+
     if (loading) return <div className="loading-container"><div className="loading">Preparing your test...</div></div>;
 
     if (result) {
@@ -115,9 +125,9 @@ const AssessmentView = () => {
                     <button
                         className="btn btn-primary"
                         style={{ marginTop: '2rem' }}
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate(returnTarget)}
                     >
-                        Back to Dashboard
+                        {returnLabel}
                     </button>
                 </div>
             </div>
@@ -139,7 +149,7 @@ const AssessmentView = () => {
                 </div>
                 <button className="btn btn-danger" onClick={() => {
                     if (window.confirm('Are you sure you want to end the test? Progress will not be saved if you leave.')) {
-                        navigate('/assessments');
+                        navigate(companyId ? `/company/${companyId}` : '/assessments');
                     }
                 }}>
                     Quit Test

@@ -94,4 +94,13 @@ export const companyAPI = {
     autoSyncQuestions: (companyId) => api.post(`/companies/${companyId}/auto-sync`),
 };
 
+// Mock Interview API
+export const mockInterviewAPI = {
+    startSession: (data) => api.post('/mock-interview/sessions', data),
+    getSession: (sessionId) => api.get(`/mock-interview/sessions/${sessionId}`),
+    submitAnswer: (sessionId, data) => api.post(`/mock-interview/sessions/${sessionId}/answers`, data),
+    finishSession: (sessionId) => api.post(`/mock-interview/sessions/${sessionId}/finish`),
+    getHistory: (params) => api.get('/mock-interview/history', { params }),
+};
+
 export default api;

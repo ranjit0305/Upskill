@@ -22,6 +22,12 @@ const CodingAssessmentView = () => {
     const [submissionResults, setSubmissionResults] = useState({}); // { [questionId]: { score, passed, passed_test_cases, total_test_cases } }
     const [result, setResult] = useState(null);
 
+    const extractCompanyId = (description) => {
+        if (!description) return null;
+        const match = String(description).match(/\bfor\s+([a-f0-9]{24})\b/i);
+        return match ? match[1] : null;
+    };
+
     const languages = [
         { label: 'Python', value: 'python', default: 'import sys\n\ndef solution():\n    # Write your code here\n    # Use sys.stdin.read() or input() if needed\n    pass\n\nif __name__ == "__main__":\n    solution()' },
         { label: 'Java', value: 'java', default: 'import java.util.*;\nimport java.io.*;\n\nclass Main {\n    public static void main(String[] args) {\n        // Write your code here\n        // System.out.println("Hello");\n    }\n}' },
@@ -174,6 +180,10 @@ const CodingAssessmentView = () => {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     };
 
+    const companyId = extractCompanyId(assessment?.description);
+    const returnTarget = companyId ? `/company/${companyId}` : '/dashboard';
+    const returnLabel = companyId ? 'Back to Company Dashboard' : 'Back to Dashboard';
+
     if (loading) return <div className="loading-container"><div className="loading">Preparing workspace...</div></div>;
 
     if (result) {
@@ -198,9 +208,9 @@ const CodingAssessmentView = () => {
                     <button
                         className="btn btn-primary"
                         style={{ marginTop: '3rem', width: '100%' }}
-                        onClick={() => navigate('/dashboard')}
+                        onClick={() => navigate(returnTarget)}
                     >
-                        Back to Dashboard
+                        {returnLabel}
                     </button>
                 </div>
             </div>
@@ -215,7 +225,7 @@ const CodingAssessmentView = () => {
         <div className="coding-interface">
             <header className="test-header">
                 <div className="header-left">
-                    <button className="btn-icon" onClick={() => navigate(-1)}><ChevronLeft /></button>
+                    <button className="btn-icon" onClick={() => navigate(companyId ? `/company/${companyId}` : -1)}><ChevronLeft /></button>
                     <h2>{assessment?.title}</h2>
                 </div>
                 <div className="test-timer">

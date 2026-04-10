@@ -10,7 +10,7 @@ import logging
 
 from app.config import settings
 from app.database import db
-from app.routers import auth, assessment, performance, admin, company
+from app.routers import auth, assessment, performance, admin, company, mock_interview
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
@@ -62,6 +62,7 @@ app.include_router(assessment.router)
 app.include_router(performance.router)
 app.include_router(admin.router)
 app.include_router(company.router)
+app.include_router(mock_interview.router)
 
 
 @app.get("/")

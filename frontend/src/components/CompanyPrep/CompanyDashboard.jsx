@@ -498,6 +498,16 @@ const CompanyDashboard = () => {
                             <span className="round-meta">20 Questions • 40 Mins</span>
                         </div>
                     </button>
+
+                    <button
+                        className="btn btn-secondary btn-round"
+                        onClick={() => navigate(`/company/${companyId}/mock-interview`)}
+                    >
+                        <div className="btn-content">
+                            <span className="round-name">Mock Interview</span>
+                            <span className="round-meta">HR • Technical • Coding Discussion</span>
+                        </div>
+                    </button>
                 </div>
             </div>
 

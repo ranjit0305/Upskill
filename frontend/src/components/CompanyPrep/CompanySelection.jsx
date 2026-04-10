@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { companyAPI } from '../../services/api';
-import { Building2, ChevronRight, Search, Plus, X } from 'lucide-react';
+import { ArrowLeft, Building2, ChevronRight, Search, Plus, X } from 'lucide-react';
 import './CompanyPrep.css';
 
 const CompanySelection = () => {
@@ -54,6 +54,9 @@ const CompanySelection = () => {
             <header className="selection-header">
                 <div className="header-content">
                     <div>
+                        <button className="btn-back" onClick={() => navigate('/dashboard')}>
+                            <ArrowLeft size={16} /> Back to Dashboard
+                        </button>
                         <h1>Company-Wise Preparation</h1>
                         <p>Select a company to start your targeted preparation</p>
                     </div>

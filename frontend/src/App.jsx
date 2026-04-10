@@ -13,6 +13,9 @@ import CompanySelection from './components/CompanyPrep/CompanySelection';
 import CompanyDashboard from './components/CompanyPrep/CompanyDashboard';
 import FeedbackUpload from './components/CompanyPrep/FeedbackUpload';
 import CodingAssessmentView from './components/Assessment/CodingAssessmentView';
+import MockInterviewHome from './components/MockInterview/MockInterviewHome';
+import MockInterviewSession from './components/MockInterview/MockInterviewSession';
+import MockInterviewReport from './components/MockInterview/MockInterviewReport';
 import './index.css';
 
 // Protected Route Component
@@ -80,6 +83,10 @@ function AppRoutes() {
                 }
             />
             <Route
+                path="/practice"
+                element={<Navigate to="/assessments" replace />}
+            />
+            <Route
                 path="/assessments/:id"
                 element={
                     <ProtectedRoute>
@@ -140,6 +147,38 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute roles={['admin', 'senior']}>
                         <FeedbackUpload />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/mock-interview"
+                element={
+                    <ProtectedRoute>
+                        <MockInterviewHome />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/company/:companyId/mock-interview"
+                element={
+                    <ProtectedRoute>
+                        <MockInterviewHome />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/mock-interview/session/:sessionId"
+                element={
+                    <ProtectedRoute>
+                        <MockInterviewSession />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/mock-interview/session/:sessionId/report"
+                element={
+                    <ProtectedRoute>
+                        <MockInterviewReport />
                     </ProtectedRoute>
                 }
             />
