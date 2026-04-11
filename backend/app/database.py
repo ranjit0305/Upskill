@@ -15,7 +15,7 @@ class Database:
     async def connect_db(cls):
         """Connect to MongoDB database"""
         try:
-            cls.client = AsyncIOMotorClient(settings.MONGODB_URI)
+            cls.client = AsyncIOMotorClient(settings.MONGODB_URI, tlsAllowInvalidCertificates=True)
             
             # Import all models here
             from app.models.user import User
