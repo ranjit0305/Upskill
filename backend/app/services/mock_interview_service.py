@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Any, Dict, List, Optional
+import random
 import re
 import statistics
 
@@ -16,6 +17,7 @@ from app.models.mock_interview import (
     MockInterviewStatus,
     MockQuestionCategory,
 )
+from app.services.gemini_service import GeminiEvaluator
 
 
 class MockInterviewService:
@@ -44,32 +46,88 @@ class MockInterviewService:
             "topic": "strengths",
             "difficulty": "easy",
         },
+        {
+            "prompt": "Where do you see yourself professionally in the next 3 to 5 years?",
+            "expected_points": ["clear direction", "skill development", "role progression", "company alignment"],
+            "topic": "career_goals",
+            "difficulty": "easy",
+        },
+        {
+            "prompt": "Tell me about a time you had to work under tight deadlines. How did you manage it?",
+            "expected_points": ["situation", "prioritization", "execution", "outcome"],
+            "topic": "time_management",
+            "difficulty": "medium",
+        },
+        {
+            "prompt": "Describe a time you had a disagreement with a teammate. How did you resolve it?",
+            "expected_points": ["conflict description", "communication", "compromise or resolution", "result"],
+            "topic": "teamwork_conflict",
+            "difficulty": "medium",
+        },
+        {
+            "prompt": "What are your weaknesses, and what have you done to actively improve them?",
+            "expected_points": ["honest weakness", "awareness", "improvement steps", "progress"],
+            "topic": "self_improvement",
+            "difficulty": "medium",
+        },
+        {
+            "prompt": "Can you walk me through a project you are most proud of and the impact it had?",
+            "expected_points": ["project description", "your role", "technical details", "measurable outcome"],
+            "topic": "project_highlight",
+            "difficulty": "easy",
+        },
+        {
+            "prompt": "How do you handle feedback, especially when it is critical or unexpected?",
+            "expected_points": ["open mindset", "concrete example", "implementation of feedback", "growth mindset"],
+            "topic": "feedback_handling",
+            "difficulty": "medium",
+        },
     ]
 
     TECHNICAL_TOPIC_BANK = {
         "OS": [
             "Explain the difference between processes and threads, and discuss where each is preferable.",
             "What is virtual memory and why is it important in modern operating systems?",
+            "How does a deadlock occur, and what are the strategies to prevent or detect it?",
         ],
         "DBMS": [
             "Explain normalization and when denormalization might still be useful.",
             "What are ACID properties and why do they matter in transactions?",
+            "Compare SQL vs NoSQL databases and describe when you would choose one over the other.",
         ],
         "Networking": [
             "Compare TCP and UDP and explain suitable use cases for each.",
             "Walk through what happens when you enter a URL in the browser.",
+            "What is the difference between HTTP and HTTPS, and why does it matter for security?",
         ],
         "Data Structures": [
             "How would you choose between an array, linked list, stack, queue, and hash map for a problem?",
             "Explain time complexity tradeoffs for common data structures you use in interviews.",
+            "When would you use a heap versus a sorted array, and how do they differ in practice?",
         ],
         "Algorithms": [
             "How do you approach optimization after getting a brute-force solution working?",
             "Explain the difference between greedy, divide-and-conquer, and dynamic programming approaches.",
+            "What is memoization and how does it differ from tabulation in dynamic programming?",
         ],
         "OOP": [
             "Explain encapsulation, inheritance, abstraction, and polymorphism with a practical example.",
             "What is composition vs inheritance, and when would you choose one over the other?",
+            "What are design patterns, and can you walk through one you have used in a project?",
+        ],
+        "System Design": [
+            "How would you design a URL shortener service, covering storage, scalability, and hashing?",
+            "Explain the difference between vertical and horizontal scaling and when each is appropriate.",
+            "What is a load balancer, and how does it help in building scalable backend systems?",
+        ],
+        "Web / APIs": [
+            "What is REST, and how does it differ from GraphQL in terms of data fetching?",
+            "Explain the request-response cycle in a web application from browser to database.",
+            "What are HTTP status codes, and can you give examples for 200, 400, 401, 403, 404, and 500?",
+        ],
+        "Git / DevOps": [
+            "What is the difference between git merge and git rebase, and when would you use each?",
+            "What is CI/CD, and how can it improve software development quality and deployment speed?",
         ],
     }
 
@@ -97,6 +155,30 @@ class MockInterviewService:
             "expected_points": ["problem structure", "traversal choice", "space-time tradeoff", "base cases"],
             "topic": "problem_strategy",
             "difficulty": "hard",
+        },
+        {
+            "prompt": "How would you approach a sliding window problem, and what signals in the problem statement suggest it?",
+            "expected_points": ["subarray or substring pattern", "two pointer technique", "window expansion and contraction", "complexity"],
+            "topic": "sliding_window",
+            "difficulty": "medium",
+        },
+        {
+            "prompt": "When would you choose recursion over iteration, and what are the risks of deep recursion stacks?",
+            "expected_points": ["stack overflow risk", "tail recursion", "memoization", "iterative equivalent"],
+            "topic": "recursion_vs_iteration",
+            "difficulty": "medium",
+        },
+        {
+            "prompt": "Walk me through how you would implement binary search and handle off-by-one errors in the boundary conditions.",
+            "expected_points": ["sorted array requirement", "mid calculation", "left and right pointer updates", "edge cases"],
+            "topic": "binary_search",
+            "difficulty": "easy",
+        },
+        {
+            "prompt": "How would you explain the difference between a stack and a queue to someone unfamiliar with data structures, and give a real-world use case for each?",
+            "expected_points": ["LIFO vs FIFO", "stack use case", "queue use case", "concrete example"],
+            "topic": "stack_vs_queue",
+            "difficulty": "easy",
         },
     ]
 
@@ -206,13 +288,28 @@ class MockInterviewService:
         technical_questions = MockInterviewService._build_technical_questions(company_name, insights)
         coding_questions = MockInterviewService._build_coding_questions(company_name, insights)
 
-        assembled = []
-        for bucket in [hr_questions, technical_questions, coding_questions]:
-            assembled.extend(bucket[:2])
+        # Shuffle each bucket so repeat sessions feel different
+        random.shuffle(hr_questions)
+        random.shuffle(technical_questions)
+        random.shuffle(coding_questions)
 
-        if question_count > len(assembled):
-            extras = hr_questions[2:] + technical_questions[2:] + coding_questions[2:]
-            assembled.extend(extras[: question_count - len(assembled)])
+        # Aim for ~⅓ from each category
+        per_section = max(1, question_count // 3)
+        remainder = question_count - per_section * 3
+
+        assembled = (
+            hr_questions[:per_section]
+            + technical_questions[:per_section]
+            + coding_questions[:per_section]
+        )
+
+        # Fill remainder from whichever buckets have extras, round-robin
+        extras = (
+            hr_questions[per_section:]
+            + technical_questions[per_section:]
+            + coding_questions[per_section:]
+        )
+        assembled.extend(extras[:remainder])
 
         return assembled[:question_count]
 
@@ -272,7 +369,7 @@ class MockInterviewService:
         if insights and insights.insights:
             topics.extend(insights.insights.important_technical_topics or [])
         if not topics:
-            topics = ["Data Structures", "Algorithms", "DBMS", "OS"]
+            topics = ["Data Structures", "Algorithms", "DBMS", "OS", "Networking", "OOP"]
 
         questions = []
         seen = set()
@@ -385,6 +482,10 @@ class MockInterviewService:
             points.append("complexity analysis")
         if "why" in lowered:
             points.append("reasoning")
+        if "design" in lowered or "scalab" in lowered:
+            points.append("system design thinking")
+        if "test" in lowered or "edge case" in lowered:
+            points.append("edge case handling")
         return list(dict.fromkeys(points))
 
     @staticmethod
@@ -394,74 +495,52 @@ class MockInterviewService:
         word_count = len(words)
         sentences = [s.strip() for s in re.split(r"[.!?]+", cleaned) if s.strip()]
 
-        expected_terms = []
-        for point in question.expected_points:
-            expected_terms.extend(re.findall(r"\b[a-zA-Z]{3,}\b", point.lower()))
-        expected_terms = list(dict.fromkeys(expected_terms))
+        # --- Semantic AI-based Evaluation (Gemini/ML) ---
+        ai_result = GeminiEvaluator.evaluate_semantic_fit(
+            question.prompt, 
+            answer_text, 
+            question.expected_points or []
+        )
+        
+        relevance = ai_result["score"]
+        technical_accuracy = ai_result["coverage"]
 
-        overlap = 0
-        if expected_terms:
-            overlap = sum(1 for term in expected_terms if term in words)
-            relevance = min(100.0, 25.0 + (overlap / len(expected_terms)) * 75.0)
-        else:
-            relevance = 60.0 if word_count >= 40 else 35.0
+        # --- Rule-based Heuristics for Presence & Style ---
+        # Clarity: Word count + fillers + sentence variety
+        filler_words = ["um", "uh", "actually", "basically", "you know", "like"]
+        filler_count = sum(1 for w in filler_words if f" {w} " in f" {cleaned.lower()} ")
+        clarity = min(100.0, 40.0 + min(word_count, 150) * 0.4)
+        clarity = max(clarity - (filler_count * 8), 30.0)
 
-        clarity = min(100.0, 30.0 + min(word_count, 160) * 0.35)
-        if len(sentences) >= 3:
-            clarity += 8
-        clarity = min(clarity, 100.0)
-
-        structure_terms = ["first", "second", "finally", "because", "therefore", "approach", "example"]
+        # Structure: detects organized answer signals
+        structure_terms = ["first", "second", "finally", "approach", "example", "result", "initially"]
         structure_hits = sum(1 for term in structure_terms if term in cleaned.lower())
-        structure = min(100.0, 25.0 + structure_hits * 12.0 + len(sentences) * 6.0)
+        structure = min(100.0, 30.0 + structure_hits * 12.0 + len(sentences) * 6.0)
 
-        technical_accuracy = relevance
-        if question.category == MockQuestionCategory.HR:
-            technical_accuracy = min(100.0, 45.0 + len(sentences) * 8.0)
+        # Confidence: assertive language
+        assertive_phrases = ["i delivered", "i improved", "i learned", "i built", "i solved", "i led"]
+        conf_hits = sum(1 for p in assertive_phrases if p in cleaned.lower())
+        confidence = min(100.0, 40.0 + conf_hits * 15.0 + (word_count // 50) * 10)
+        if word_count < 25: confidence = max(confidence - 20, 10.0)
 
-        confidence = min(100.0, 30.0 + min(word_count, 140) * 0.3)
-        if any(term in cleaned.lower() for term in ["i delivered", "i improved", "i learned", "i built", "i solved"]):
-            confidence += 10
-        confidence = min(confidence, 100.0)
-
+        # --- Composite score ---
         score = round(
-            relevance * 0.30
-            + clarity * 0.20
-            + structure * 0.20
-            + technical_accuracy * 0.20
-            + confidence * 0.10,
-            2,
+            relevance * 0.35 +
+            clarity * 0.15 +
+            structure * 0.15 +
+            technical_accuracy * 0.25 +
+            confidence * 0.10,
+            2
         )
 
-        strengths = []
-        improvements = []
+        strengths = ai_result["strengths"]
+        improvements = ai_result["improvements"]
 
-        if relevance >= 65:
-            strengths.append("Your answer stayed relevant to the interviewer’s question.")
-        else:
-            improvements.append("Make the answer more directly aligned with the question and expected discussion points.")
+        if clarity >= 75: strengths.append("Your explanation is clear and easy to follow.")
+        if structure < 60: improvements.append("Try using transition words like 'firstly' or 'moreover' to improve flow.")
+        if word_count < 40: improvements.append("Provide more detailed examples to increase the depth of your answer.")
 
-        if clarity >= 65:
-            strengths.append("You communicated your ideas with reasonable clarity.")
-        else:
-            improvements.append("Use shorter, clearer statements and avoid vague explanations.")
-
-        if structure >= 65:
-            strengths.append("Your response had a structured flow.")
-        else:
-            improvements.append("Organize the response using a clear structure such as introduction, explanation, and conclusion.")
-
-        if technical_accuracy >= 65 and question.category != MockQuestionCategory.HR:
-            strengths.append("You covered core technical ideas expected in this answer.")
-        elif question.category != MockQuestionCategory.HR:
-            improvements.append("Add more technical depth, examples, and tradeoff discussion.")
-
-        if confidence >= 65:
-            strengths.append("The response sounds more confident and interview-ready.")
-        else:
-            improvements.append("Speak more decisively and include concrete examples or outcomes.")
-
-        suggested_answer = "A strong answer should cover: " + ", ".join(question.expected_points or ["clear structure", "relevant explanation"])
+        suggested_answer = f"Goal: {question.prompt}. Key points: " + ", ".join(question.expected_points or ["general context"])
 
         return MockInterviewFeedback(
             relevance=round(relevance, 2),
@@ -474,6 +553,7 @@ class MockInterviewService:
             improvements=improvements[:3],
             suggested_answer=suggested_answer,
         )
+
 
     @staticmethod
     async def _finalize_session(session: MockInterviewSession) -> None:
@@ -492,24 +572,18 @@ class MockInterviewService:
         )
 
         weighted_parts = []
+        total_weight = 0.0
         if section_map["hr"]:
             weighted_parts.append(session.section_scores.hr * 0.25)
+            total_weight += 0.25
         if section_map["technical"]:
             weighted_parts.append(session.section_scores.technical * 0.35)
+            total_weight += 0.35
         if section_map["coding"]:
             weighted_parts.append(session.section_scores.coding * 0.40)
+            total_weight += 0.40
 
-        if weighted_parts:
-            total_weight = 0.0
-            if section_map["hr"]:
-                total_weight += 0.25
-            if section_map["technical"]:
-                total_weight += 0.35
-            if section_map["coding"]:
-                total_weight += 0.40
-            session.overall_score = round(sum(weighted_parts) / total_weight, 2)
-        else:
-            session.overall_score = 0.0
+        session.overall_score = round(sum(weighted_parts) / total_weight, 2) if total_weight else 0.0
 
         session.summary = MockInterviewService._build_summary(session)
         session.recommendations = MockInterviewService._build_recommendations(session)
@@ -523,9 +597,16 @@ class MockInterviewService:
 
     @staticmethod
     def _build_summary(session: MockInterviewSession) -> str:
-        if session.overall_score >= 75:
-            return "Strong mock interview performance. Your answers are structured and reasonably interview-ready."
-        if session.overall_score >= 55:
+        score = session.overall_score
+        answered = len(session.answers)
+        total = len(session.questions)
+        if answered < total:
+            return f"Session ended early with {answered} of {total} questions answered. Review your completed answers below."
+        if score >= 80:
+            return "Excellent mock interview performance! Your answers are well-structured, relevant, and interview-ready."
+        if score >= 65:
+            return "Strong mock interview performance. Your answers show good structure and relevance with room for further depth."
+        if score >= 50:
             return "Moderate mock interview performance. You have good foundations but still need more depth and polish."
         return "Early-stage mock interview performance. Focus on structure, relevance, and clearer technical communication."
 
@@ -538,8 +619,12 @@ class MockInterviewService:
             recommendations.append("Revise core concepts and explain them aloud with examples, tradeoffs, and real use cases.")
         if session.section_scores.coding < 60:
             recommendations.append("Improve coding discussions by clearly explaining approach, complexity, and edge-case testing.")
-        if not recommendations:
-            recommendations.append("Good job. Keep practicing with company-specific mock interviews to maintain consistency.")
+        if session.section_scores.hr >= 60 and session.section_scores.technical >= 60 and session.section_scores.coding >= 60:
+            recommendations.append("Good performance across all sections. Keep practicing with company-specific sessions to stay sharp.")
+        if session.overall_score >= 75:
+            recommendations.append("Consider attempting company mock interviews to benchmark yourself against company-specific expectations.")
+        if len(session.answers) < len(session.questions):
+            recommendations.append("Complete the full set of questions next time — finishing all rounds gives a more accurate picture of your readiness.")
         return recommendations[:4]
 
     @staticmethod
