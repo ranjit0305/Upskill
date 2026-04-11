@@ -694,3 +694,36 @@ analyze_feedback called at timestamp... length: 3591
 
 ==================================================
 ADVANCED NLP EXTRACTION START. Text length: 3591
+
+analyze_feedback called at timestamp... length: 85850
+
+==================================================
+ADVANCED NLP EXTRACTION START. Text length: 85850
+ROUTER: analyze_feedback finished. Tech Qs found: 0
+ROUTER: find_one finished. Found existing insights? False
+ROUTER: Creating NEW insights. Tech Qs: 0
+
+analyze_feedback called at timestamp... length: 67245
+
+==================================================
+ADVANCED NLP EXTRACTION START. Text length: 67245
+ROUTER: analyze_feedback finished. Tech Qs found: 0
+ROUTER: find_one finished. Found existing insights? True
+
+ROUTER: STARTING Technical Question Merge. Current count: 0, New from PDF: 0
+ROUTER: Technical Merge DONE. Final count: 0
+
+analyze_feedback called at timestamp... length: 30958
+
+==================================================
+ADVANCED NLP EXTRACTION START. Text length: 30958
+
+analyze_feedback called at timestamp... length: 2740
+
+==================================================
+ADVANCED NLP EXTRACTION START. Text length: 2740
+
+analyze_feedback called at timestamp... length: 1840
+
+==================================================
+ADVANCED NLP EXTRACTION START. Text length: 1840
