@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { assessmentAPI } from '../../services/api';
-import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle } from 'lucide-react';
+import { Clock, ChevronLeft, ChevronRight, Send, AlertTriangle, ShieldCheck, Camera, Sparkles, Layout } from 'lucide-react';
 import './Assessment.css';
 
 const AssessmentView = () => {
@@ -30,12 +30,11 @@ const AssessmentView = () => {
             setAssessment(response.data);
             setTimeLeft(response.data.duration * 60);
 
-            // Fetch questions specifically for this assessment
             const questionsRes = await assessmentAPI.getAssessmentQuestions(id);
             setQuestions(questionsRes.data);
-            setLoading(false);
         } catch (err) {
             console.error('Error fetching assessment detail:', err);
+        } finally {
             setLoading(false);
         }
     }, [id]);
@@ -75,7 +74,7 @@ const AssessmentView = () => {
             const formattedAnswers = Object.entries(userAnswers).map(([qId, ans]) => ({
                 question_id: qId,
                 answer: ans,
-                time_taken: 0 // Could track per-question time in future
+                time_taken: 0
             }));
 
             const submissionData = {
@@ -86,9 +85,9 @@ const AssessmentView = () => {
 
             const response = await assessmentAPI.submitAssessment(submissionData);
             setResult(response.data);
-            setSubmitting(false);
         } catch (err) {
             console.error('Error submitting assessment:', err);
+        } finally {
             setSubmitting(false);
         }
     };
@@ -101,35 +100,36 @@ const AssessmentView = () => {
 
     const companyId = extractCompanyId(assessment?.description);
     const returnTarget = companyId ? `/company/${companyId}` : '/dashboard';
-    const returnLabel = companyId ? 'Back to Company Dashboard' : 'Back to Dashboard';
 
-    if (loading) return <div className="loading-container"><div className="loading">Preparing your test...</div></div>;
+    if (loading) return <div className="loading">Initializing secure assessment environment...</div>;
 
     if (result) {
         return (
-            <div className="results-container">
-                <div className="card" style={{ maxWidth: '600px', margin: '0 auto', padding: '3rem' }}>
-                    <h2 style={{ color: 'var(--success)' }}>Assessment Completed!</h2>
-                    <p>Your performance has been evaluated.</p>
+            <div className="results-container premium-bg">
+                <main className="result-card-inner glass-card animate-fade-in">
+                    <div style={{ background: 'rgba(16, 185, 129, 0.1)', width: '80px', height: '80px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' }}>
+                        <ShieldCheck size={40} color="#10b981" />
+                    </div>
+                    <h2 style={{ fontSize: '2rem', fontWeight: 900, marginBottom: '0.5rem' }}>Submission Successful</h2>
+                    <p style={{ color: 'var(--slate)', fontWeight: 600 }}>Your performance telemetry has been analyzed.</p>
+                    
                     <div className="results-score">{Math.round(result.score)}%</div>
-                    <div className="stats-grid" style={{ marginTop: '2rem' }}>
-                        <div className="stat-card">
-                            <div className="stat-value">{Math.round(result.accuracy)}%</div>
-                            <div className="stat-label">Accuracy</div>
+                    
+                    <div className="stats-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2.5rem' }}>
+                        <div className="glass-card" style={{ padding: '1.5rem' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{Math.round(result.accuracy)}%</div>
+                            <div className="stat-label">Precision</div>
                         </div>
-                        <div className="stat-card">
-                            <div className="stat-value">{formatTime(result.time_taken)}</div>
-                            <div className="stat-label">Time Taken</div>
+                        <div className="glass-card" style={{ padding: '1.5rem' }}>
+                            <div style={{ fontSize: '1.5rem', fontWeight: 900 }}>{formatTime(result.time_taken)}</div>
+                            <div className="stat-label">Efficiency</div>
                         </div>
                     </div>
-                    <button
-                        className="btn btn-primary"
-                        style={{ marginTop: '2rem' }}
-                        onClick={() => navigate(returnTarget)}
-                    >
-                        {returnLabel}
+
+                    <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => navigate(returnTarget)}>
+                        Return to Command Center <ChevronRight size={18} />
                     </button>
-                </div>
+                </main>
             </div>
         );
     }
@@ -137,110 +137,133 @@ const AssessmentView = () => {
     const currentQuestion = questions[currentIndex];
 
     return (
-        <div className="test-interface">
+        <div className="test-interface premium-bg">
             <header className="test-header">
                 <div>
-                    <h2 style={{ margin: 0 }}>{assessment?.title}</h2>
-                    <span className="question-number">Question {currentIndex + 1} of {questions.length}</span>
+                    <h2 style={{ margin: 0, fontWeight: 900 }}>{assessment?.title}</h2>
+                    <span className="question-number" style={{ margin: 0 }}>Progress Optic: {currentIndex + 1} / {questions.length}</span>
                 </div>
-                <div className="test-timer">
-                    <Clock size={24} style={{ marginRight: '0.5rem' }} />
-                    {formatTime(timeLeft)}
+                
+                <div className="nav-right">
+                    <div className="test-timer">
+                        <Clock size={20} />
+                        {formatTime(timeLeft)}
+                    </div>
+                    <button className="btn-back glass" style={{ marginBottom: 0, color: '#ef4444' }} onClick={() => {
+                        if (window.confirm('Abandon assessment? Results will not be cataloged.')) {
+                            navigate(companyId ? `/company/${companyId}` : '/assessments');
+                        }
+                    }}>
+                        Terminate
+                    </button>
                 </div>
-                <button className="btn btn-danger" onClick={() => {
-                    if (window.confirm('Are you sure you want to end the test? Progress will not be saved if you leave.')) {
-                        navigate(companyId ? `/company/${companyId}` : '/assessments');
-                    }
-                }}>
-                    Quit Test
-                </button>
             </header>
 
-            <main className="test-content">
-                {currentQuestion ? (
-                    <>
-                        <div className="question-text">
-                            {currentQuestion.question}
-                        </div>
-                        {(!currentQuestion.options || currentQuestion.options.length === 0) ? (
-                            <div className="subjective-component">
-                                <div className="card subjective-card">
-                                    <div className="subjective-header">
-                                        <AlertTriangle size={18} />
-                                        <span>This is an open-ended/behavioral question.</span>
-                                    </div>
-                                    <p className="subjective-prompt">
-                                        Prepare your response mentally or write it down. Focus on your specific experiences and results.
-                                    </p>
-                                    <button 
-                                        className="btn btn-outline btn-sm"
-                                        onClick={() => setShowExplanations(prev => ({
-                                            ...prev,
-                                            [currentQuestion.id]: !prev[currentQuestion.id]
-                                        }))}
-                                    >
-                                        {showExplanations[currentQuestion.id] ? "Hide Guide" : "Show Model Answer / Guide"}
-                                    </button>
-                                    
-                                    {showExplanations[currentQuestion.id] && (
-                                        <div className="explanation-box animate-fade-in">
-                                            <strong>Model Answer / Approach:</strong>
-                                            <p>{currentQuestion.explanation || "No specific guide provided for this question."}</p>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        ) : (
-                            <div className="options-list">
-                                {currentQuestion.options?.map((option, idx) => {
-                                    const letter = String.fromCharCode(65 + idx);
-                                    const isSelected = userAnswers[currentQuestion.id] === option;
-                                    return (
-                                        <div
-                                            key={idx}
-                                            className={`option-item ${isSelected ? 'selected' : ''}`}
-                                            onClick={() => handleOptionSelect(currentQuestion.id, option)}
-                                        >
-                                            <div className="option-letter">{letter}</div>
-                                            <div className="option-text">{option}</div>
-                                        </div>
-                                    );
-                                })}
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <div className="error-message">
-                        <AlertTriangle />
-                        <p>Questions not found for this assessment.</p>
+            <div className="proctor-module">
+                <div className="proctor-camera">
+                    <div className="proctor-scan-line"></div>
+                </div>
+                <div className="proctor-status">
+                    <div className="status-indicator">
+                        <Camera size={14} className="pulse" />
+                        AI Proctor Active
                     </div>
-                )}
+                    <div style={{ fontSize: '0.65rem', color: 'var(--slate)', marginTop: '0.5rem', fontWeight: 600 }}>
+                        Monitoring face orientation & environment stability.
+                    </div>
+                </div>
+            </div>
 
-                <div className="test-footer">
-                    <button
-                        className="btn btn-outline"
-                        disabled={currentIndex === 0}
-                        onClick={() => setCurrentIndex(prev => prev - 1)}
-                    >
-                        <ChevronLeft /> Previous
-                    </button>
-
-                    {currentIndex === questions.length - 1 ? (
-                        <button
-                            className="btn btn-primary"
-                            onClick={handleSubmit}
-                            disabled={submitting}
-                        >
-                            {submitting ? 'Submitting...' : 'Finish & Submit'} <Send size={18} />
-                        </button>
+            <main className="test-content animate-fade-in">
+                <div className="glass-card question-card">
+                    {currentQuestion ? (
+                        <>
+                            <span className="question-number">Problem Parameter {currentIndex + 1}</span>
+                            <div className="question-text">
+                                {currentQuestion.question}
+                            </div>
+                            
+                            {(!currentQuestion.options || currentQuestion.options.length === 0) ? (
+                                <div className="subjective-component">
+                                    <div className="glass-card" style={{ padding: '2rem', background: 'rgba(255,255,255,0.4)' }}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--slate)', marginBottom: '1rem', fontWeight: 700 }}>
+                                            <Sparkles size={18} color="var(--primary)" />
+                                            <span>BEHAVIORAL DIMENSION INTERROGATION</span>
+                                        </div>
+                                        <p style={{ lineHeight: 1.6, marginBottom: '1.5rem' }}>
+                                            Formulate a high-impact response based on your professional trajectory.
+                                        </p>
+                                        <button 
+                                            className="btn-back glass"
+                                            style={{ marginBottom: 0 }}
+                                            onClick={() => setShowExplanations(prev => ({ ...prev, [currentQuestion.id]: !prev[currentQuestion.id] }))}
+                                        >
+                                            {showExplanations[currentQuestion.id] ? "Hide Stratagem" : "Reveal Evaluation Stratagem"}
+                                        </button>
+                                        
+                                        {showExplanations[currentQuestion.id] && (
+                                            <div className="explanation-box animate-fade-in" style={{ background: 'white', borderRadius: '12px', marginTop: '1.5rem' }}>
+                                                <strong style={{ textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Optimized Response Architecture:</strong>
+                                                <p>{currentQuestion.explanation || "Detailed stratagem pending."}</p>
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="options-list">
+                                    {currentQuestion.options?.map((option, idx) => {
+                                        const letter = String.fromCharCode(65 + idx);
+                                        const isSelected = userAnswers[currentQuestion.id] === option;
+                                        return (
+                                            <div
+                                                key={idx}
+                                                className={`option-item ${isSelected ? 'selected' : ''}`}
+                                                onClick={() => handleOptionSelect(currentQuestion.id, option)}
+                                            >
+                                                <div className="option-letter">{letter}</div>
+                                                <div className="option-text" style={{ fontWeight: 600 }}>{option}</div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </>
                     ) : (
-                        <button
-                            className="btn btn-primary"
-                            onClick={() => setCurrentIndex(prev => prev + 1)}
-                        >
-                            Next <ChevronRight />
-                        </button>
+                        <div className="error-message">
+                            <AlertTriangle color="var(--danger)" />
+                            <p>Telemetry sync failure: Question pool unreachable.</p>
+                        </div>
                     )}
+
+                    <footer className="test-footer">
+                        <button
+                            className="btn-back glass"
+                            style={{ marginBottom: 0 }}
+                            disabled={currentIndex === 0}
+                            onClick={() => setCurrentIndex(prev => prev - 1)}
+                        >
+                            <ChevronLeft /> Previous
+                        </button>
+
+                        <div style={{ display: 'flex', gap: '1rem' }}>
+                            {currentIndex === questions.length - 1 ? (
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={handleSubmit}
+                                    disabled={submitting}
+                                >
+                                    {submitting ? 'Processing...' : 'Finalize & Submit'}
+                                </button>
+                            ) : (
+                                <button
+                                    className="btn btn-primary"
+                                    onClick={() => setCurrentIndex(prev => prev + 1)}
+                                >
+                                    Proceed <ChevronRight />
+                                </button>
+                            )}
+                        </div>
+                    </footer>
                 </div>
             </main>
         </div>

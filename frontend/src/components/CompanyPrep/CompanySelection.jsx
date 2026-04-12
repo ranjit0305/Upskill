@@ -45,81 +45,87 @@ const CompanySelection = () => {
         company.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    if (loading) return <div className="loading">Loading companies...</div>;
+    if (loading) return <div className="loading">Mapping company landscapes...</div>;
 
     const isAdmin = user?.role === 'admin' || user?.role === 'senior';
 
     return (
-        <div className="company-selection-container container">
-            <header className="selection-header">
-                <div className="header-content">
-                    <div>
-                        <button className="btn-back" onClick={() => navigate('/dashboard')}>
-                            <ArrowLeft size={16} /> Back to Dashboard
-                        </button>
-                        <h1>Company-Wise Preparation</h1>
-                        <p>Select a company to start your targeted preparation</p>
+        <div className="company-selection-container premium-bg">
+            <div className="container animate-fade-in">
+                <header className="selection-header">
+                    <button className="mock-back" onClick={() => navigate('/dashboard')}>
+                        <ArrowLeft size={16} /> Dashboard
+                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+                        <h1>Targeted Preparation</h1>
+                        {isAdmin && (
+                            <button className="btn btn-primary" onClick={() => setShowAddModal(true)}>
+                                <Plus size={18} /> Add Target Company
+                            </button>
+                        )}
                     </div>
-                    {isAdmin && (
-                        <button className="btn-primary" onClick={() => setShowAddModal(true)}>
-                            <Plus size={18} /> Add Company
-                        </button>
-                    )}
+                </header>
+
+                <div className="search-bar">
+                    <Search size={20} color="var(--primary)" />
+                    <input
+                        type="text"
+                        placeholder="Search for a company (e.g. Google, Amazon, Microsoft)..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        style={{ background: 'transparent', outline: 'none', border: 'none', width: '100%', marginLeft: '1rem', fontSize: '1.1rem' }}
+                    />
                 </div>
-            </header>
 
-            <div className="search-bar">
-                <Search size={20} color="#64748b" />
-                <input
-                    type="text"
-                    placeholder="Search companies..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                />
-            </div>
-
-            <div className="company-grid">
-                {filteredCompanies.map(company => (
-                    <div
-                        key={company._id}
-                        className="company-card"
-                        onClick={() => navigate(`/company/${company._id}`)}
-                    >
-                        <div className="company-logo">
-                            {company.logo_url ? (
-                                <img src={company.logo_url} alt={company.name} />
-                            ) : (
-                                <Building2 size={40} color="var(--primary)" />
-                            )}
-                        </div>
-                        <div className="company-info">
-                            <h3>{company.name}</h3>
-                            <p>{company.description.substring(0, 100)}...</p>
-                            <div className="company-tags">
-                                {company.important_areas?.slice(0, 3).map(area => (
-                                    <span key={area} className="tag">{area}</span>
-                                ))}
+                <div className="company-grid">
+                    {filteredCompanies.map(company => (
+                        <div
+                            key={company._id}
+                            className="company-card"
+                            onClick={() => navigate(`/company/${company._id}`)}
+                        >
+                            <div className="company-logo" style={{ marginBottom: '1.5rem', background: 'white', padding: '0.75rem', borderRadius: '16px', display: 'inline-flex', boxShadow: '0 4px 12px rgba(0,0,0,0.03)' }}>
+                                {company.logo_url ? (
+                                    <img src={company.logo_url} alt={company.name} style={{ height: '40px', objectFit: 'contain' }} />
+                                ) : (
+                                    <Building2 size={32} color="var(--primary)" />
+                                )}
+                            </div>
+                            <div className="company-info">
+                                <h3 style={{ fontSize: '1.4rem', fontWeight: 800, color: 'var(--dark)' }}>{company.name}</h3>
+                                <p style={{ color: 'var(--slate)', fontSize: '0.95rem', lineHeight: 1.6, margin: '0.5rem 0 1.25rem' }}>
+                                    {company.description.substring(0, 100)}...
+                                </p>
+                                <div className="company-tags">
+                                    {company.important_areas?.slice(0, 3).map(area => (
+                                        <span key={area} className="mock-mode-badge" style={{ margin: 0 }}>{area}</span>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="card-footer" style={{ marginTop: '1.5rem', paddingTop: '1rem', borderTop: '1px solid rgba(0,0,0,0.05)', display: 'flex', justifyContent: 'space-between', color: 'var(--primary)', fontWeight: 800 }}>
+                                <span>Configure Prep</span>
+                                <ChevronRight size={18} />
                             </div>
                         </div>
-                        <div className="card-footer">
-                            <span>Start Prep</span>
-                            <ChevronRight size={16} />
-                        </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
 
             {showAddModal && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <button className="modal-close" onClick={() => setShowAddModal(false)}>
-                            <X size={24} />
-                        </button>
-                        <h2>Add New Company</h2>
-                        <form onSubmit={handleCreateCompany}>
+                <div className="modal-overlay glass" style={{ position: 'fixed', inset: 0, zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <div className="glass-card" style={{ maxWidth: '500px', width: '90%', animation: 'fadeSlideIn 0.3s' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '1.5rem' }}>
+                            <h2 style={{ margin: 0, fontWeight: 900 }}>New Target</h2>
+                            <button className="btn-back" style={{ marginBottom: 0 }} onClick={() => setShowAddModal(false)}>
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <form onSubmit={handleCreateCompany} style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                             <div className="form-group">
-                                <label>Company Name</label>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--slate)' }}>COMPANY NAME</label>
                                 <input
+                                    className="mock-answer-box"
+                                    style={{ minHeight: 'auto', padding: '0.75rem 1rem' }}
                                     type="text"
                                     required
                                     value={newCompany.name}
@@ -127,30 +133,16 @@ const CompanySelection = () => {
                                 />
                             </div>
                             <div className="form-group">
-                                <label>Description</label>
+                                <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 700, fontSize: '0.85rem', color: 'var(--slate)' }}>DESCRIPTION</label>
                                 <textarea
+                                    className="mock-answer-box"
+                                    style={{ minHeight: '100px', padding: '0.75rem 1rem' }}
                                     required
                                     value={newCompany.description}
                                     onChange={(e) => setNewCompany({ ...newCompany, description: e.target.value })}
                                 />
                             </div>
-                            <div className="form-group">
-                                <label>Logo URL (Optional)</label>
-                                <input
-                                    type="url"
-                                    value={newCompany.logo_url}
-                                    onChange={(e) => setNewCompany({ ...newCompany, logo_url: e.target.value })}
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label>Website (Optional)</label>
-                                <input
-                                    type="url"
-                                    value={newCompany.website}
-                                    onChange={(e) => setNewCompany({ ...newCompany, website: e.target.value })}
-                                />
-                            </div>
-                            <button type="submit" className="btn-primary">Create Company</button>
+                            <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }}>Create Landscape</button>
                         </form>
                     </div>
                 </div>
@@ -158,5 +150,6 @@ const CompanySelection = () => {
         </div>
     );
 };
+
 
 export default CompanySelection;

@@ -27,3 +27,13 @@ async def get_platform_stats(admin = Depends(get_admin_user)):
 async def get_question_dist(admin = Depends(get_admin_user)):
     """Get distribution of questions by category"""
     return await AdminService.get_question_distribution()
+
+@router.get("/settings/{category}", response_model=Dict[str, Any])
+async def get_settings(category: str, admin = Depends(get_admin_user)):
+    """Get platform settings for a category"""
+    return await AdminService.get_settings(category)
+
+@router.post("/settings/{category}", response_model=Dict[str, Any])
+async def update_settings(category: str, data: Dict[str, Any], admin = Depends(get_admin_user)):
+    """Update platform settings"""
+    return await AdminService.update_settings(category, data)

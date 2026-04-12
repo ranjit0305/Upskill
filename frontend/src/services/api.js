@@ -82,6 +82,8 @@ export const performanceAPI = {
 export const adminAPI = {
     getStats: () => api.get('/admin/stats'),
     getDistribution: () => api.get('/admin/distribution'),
+    getSettings: (category) => api.get(`/admin/settings/${category}`),
+    updateSettings: (category, data) => api.post(`/admin/settings/${category}`, data),
 };
 
 // Company Preparation API

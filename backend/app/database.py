@@ -23,6 +23,7 @@ class Database:
             from app.models.performance import Performance, ReadinessScore
             from app.models.company import Company, InterviewFeedback, CompanyInsights
             from app.models.mock_interview import MockInterviewSession
+            from app.models.settings import SystemSettings
             
             # Initialize Beanie with models
             await init_beanie(
@@ -37,7 +38,8 @@ class Database:
                     Company,
                     InterviewFeedback,
                     CompanyInsights,
-                    MockInterviewSession
+                    MockInterviewSession,
+                    SystemSettings
                 ]
             )
             

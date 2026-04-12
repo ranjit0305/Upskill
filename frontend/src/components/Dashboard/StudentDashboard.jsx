@@ -1,9 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { performanceAPI } from '../../services/api';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
-import { TrendingUp, Award, Target, BookOpen } from 'lucide-react';
+import { 
+    RadarChart, 
+    PolarGrid, 
+    PolarAngleAxis, 
+    PolarRadiusAxis, 
+    Radar, 
+    ResponsiveContainer,
+    Tooltip
+} from 'recharts';
+import { TrendingUp, Award, Target, BookOpen, LogOut, ChevronRight, Layout } from 'lucide-react';
 import './Dashboard.css';
 
 const StudentDashboard = () => {
@@ -33,73 +41,74 @@ const StudentDashboard = () => {
     };
 
     const getScoreColor = (score) => {
-        if (score >= 80) return 'var(--success)';
-        if (score >= 60) return 'var(--warning)';
-        return 'var(--danger)';
+        if (score >= 80) return '#10b981';
+        if (score >= 60) return '#f59e0b';
+        return '#ef4444';
     };
 
-    const getScoreBadge = (score) => {
-        if (score >= 80) return 'badge-success';
-        if (score >= 60) return 'badge-warning';
-        return 'badge-danger';
-    };
+    const radarData = useMemo(() => {
+        if (!readiness) return [];
+        return [
+            { subject: 'Aptitude', score: readiness.component_scores.aptitude },
+            { subject: 'Technical', score: readiness.component_scores.technical },
+            { subject: 'Coding', score: readiness.component_scores.coding },
+            { subject: 'Consistency', score: readiness.component_scores.consistency },
+        ];
+    }, [readiness]);
 
     if (loading) {
-        return <div className="loading">Loading your dashboard...</div>;
+        return <div className="loading">Preparing your career landscape...</div>;
     }
 
-    const radarData = readiness ? [
-        { subject: 'Aptitude', score: readiness.component_scores.aptitude },
-        { subject: 'Technical', score: readiness.component_scores.technical },
-        { subject: 'Coding', score: readiness.component_scores.coding },
-        { subject: 'Consistency', score: readiness.component_scores.consistency },
-    ] : [];
-
     return (
-        <div className="dashboard">
+        <div className="dashboard premium-bg">
             <nav className="navbar">
                 <div className="container nav-content">
-                    <h2>Upskill</h2>
+                    <div className="nav-left">
+                        <h2 style={{ color: '#1e1b4b', fontWeight: 900, fontSize: '1.5rem' }}>Upskill</h2>
+                    </div>
                     <div className="nav-right">
                         {(user?.role === 'admin' || user?.role === 'senior') && (
-                            <button onClick={() => navigate('/admin')} className="btn btn-secondary" style={{ marginRight: '1rem' }}>
-                                Admin Dashboard
+                            <button onClick={() => navigate('/admin')} className="btn btn-outline">
+                                <Layout size={16} /> Admin Panel
                             </button>
                         )}
-                        <span>Welcome, {user?.profile?.name}</span>
-                        <button onClick={logout} className="btn btn-outline">Logout</button>
+                        <span style={{ fontWeight: 600, color: '#475569' }}>{user?.profile?.name}</span>
+                        <button onClick={logout} className="btn-back" style={{ color: '#ef4444', background: 'rgba(239, 68, 68, 0.05)' }}>
+                            <LogOut size={16} /> Logout
+                        </button>
                     </div>
                 </div>
             </nav>
 
-            <div className="container dashboard-content">
+            <div className="container dashboard-content animate-fade-in">
                 <div className="dashboard-header">
-                    <h1>Your Placement Dashboard</h1>
-                    <p>Track your progress and improve your readiness</p>
+                    <h1>Your Placement Journey</h1>
+                    <p>Track your growth across technical and behavioral dimensions.</p>
                 </div>
 
                 {/* Readiness Score Card */}
                 <div className="score-card">
                     <div className="score-main">
-                        <div className="score-circle" style={{ borderColor: getScoreColor(readiness?.overall_score || 0) }}>
+                        <div className="score-circle">
                             <div className="score-value">{Math.round(readiness?.overall_score || 0)}</div>
-                            <div className="score-label">Readiness Score</div>
+                            <div className="score-label">Readiness</div>
                         </div>
                         <div className="score-info">
-                            <h3>Placement Readiness</h3>
-                            <p>{readiness?.explanation}</p>
-                            <span className={`badge ${getScoreBadge(readiness?.overall_score || 0)}`}>
-                                {readiness?.overall_score >= 80 ? 'Excellent' : readiness?.overall_score >= 60 ? 'Good' : 'Needs Improvement'}
-                            </span>
+                            <h3>Overall Placement Readiness</h3>
+                            <p>{readiness?.explanation || "Track your progress to see detailed insights about your readiness."}</p>
+                            <div className={`mock-status-badge ${readiness?.overall_score >= 80 ? 'completed' : 'active'}`}>
+                                {readiness?.overall_score >= 80 ? 'Battle Ready' : 'In Preparation'}
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Stats Grid */}
                 <div className="stats-grid">
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ backgroundColor: '#e0e7ff' }}>
-                            <Target size={24} color="var(--primary)" />
+                    <div className="stat-card glass-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
+                            <Target size={24} color="#6366f1" />
                         </div>
                         <div className="stat-content">
                             <div className="stat-value">{performance?.metrics?.total_attempts || 0}</div>
@@ -107,9 +116,9 @@ const StudentDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ backgroundColor: '#d1fae5' }}>
-                            <Award size={24} color="var(--success)" />
+                    <div className="stat-card glass-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                            <Award size={24} color="#10b981" />
                         </div>
                         <div className="stat-content">
                             <div className="stat-value">{Math.round(performance?.metrics?.accuracy || 0)}%</div>
@@ -117,9 +126,9 @@ const StudentDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ backgroundColor: '#fef3c7' }}>
-                            <TrendingUp size={24} color="var(--warning)" />
+                    <div className="stat-card glass-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
+                            <TrendingUp size={24} color="#f59e0b" />
                         </div>
                         <div className="stat-content">
                             <div className="stat-value">{Math.round(performance?.metrics?.consistency_score || 0)}%</div>
@@ -127,9 +136,9 @@ const StudentDashboard = () => {
                         </div>
                     </div>
 
-                    <div className="stat-card">
-                        <div className="stat-icon" style={{ backgroundColor: '#e0e7ff' }}>
-                            <BookOpen size={24} color="var(--secondary)" />
+                    <div className="stat-card glass-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(139, 92, 246, 0.1)' }}>
+                            <BookOpen size={24} color="#8b5cf6" />
                         </div>
                         <div className="stat-content">
                             <div className="stat-value">{performance?.metrics?.avg_speed?.toFixed(1) || 0}</div>
@@ -140,21 +149,20 @@ const StudentDashboard = () => {
 
                 {/* Charts */}
                 <div className="charts-grid">
-                    <div className="card chart-card">
-                        <h3>Component Breakdown</h3>
+                    <div className="glass-card">
+                        <h3>Domain Mastery</h3>
                         <ResponsiveContainer width="100%" height={300}>
                             <RadarChart data={radarData}>
-                                <PolarGrid />
-                                <PolarAngleAxis dataKey="subject" />
-                                <PolarRadiusAxis angle={90} domain={[0, 100]} />
-                                <Radar name="Score" dataKey="score" stroke="var(--primary)" fill="var(--primary)" fillOpacity={0.6} />
+                                <PolarGrid stroke="rgba(203, 213, 225, 0.5)" />
+                                <PolarAngleAxis dataKey="subject" tick={{ fill: '#64748b', fontSize: 12, fontWeight: 600 }} />
+                                <Radar name="Score" dataKey="score" stroke="#6366f1" fill="#6366f1" fillOpacity={0.2} />
                                 <Tooltip />
                             </RadarChart>
                         </ResponsiveContainer>
                     </div>
 
-                    <div className="card recommendations-card">
-                        <h3>Personalized Recommendations</h3>
+                    <div className="glass-card recommendations-card">
+                        <h3>AI Recommendations</h3>
                         <div className="recommendations-list">
                             {readiness?.recommendations?.map((rec, index) => (
                                 <div key={index} className="recommendation-item">
@@ -167,8 +175,8 @@ const StudentDashboard = () => {
                 </div>
 
                 {/* Topic-wise Mastery */}
-                <div className="card topic-mastery-card" style={{ marginTop: '2rem' }}>
-                    <h3>Topic-wise Mastery</h3>
+                <div className="glass-card topic-mastery-card">
+                    <h3>Technical Topic Breakdown</h3>
                     <div className="topic-grid">
                         {performance?.topic_performance?.map((tp, index) => (
                             <div key={index} className="topic-metric">
@@ -186,30 +194,24 @@ const StudentDashboard = () => {
                                     ></div>
                                 </div>
                                 <div className="topic-stats">
-                                    <span>{tp?.correct_answers || 0}/{tp?.total_questions || 0} Correct</span>
-                                    <span>Updated {tp?.updated_at ? new Date(tp.updated_at).toLocaleDateString() : 'N/A'}</span>
+                                    <span>{tp?.correct_answers || 0} Correct</span>
+                                    <span>Last Activity: {tp?.updated_at ? new Date(tp.updated_at).toLocaleDateString() : 'N/A'}</span>
                                 </div>
                             </div>
                         ))}
-                        {(!performance?.topic_performance || performance.topic_performance.length === 0) && (
-                            <p className="empty-msg">No specific topic data available yet. Take themed tests to see your mastery levels.</p>
-                        )}
                     </div>
                 </div>
 
                 {/* Action Buttons */}
                 <div className="action-buttons">
                     <button className="btn btn-primary" onClick={() => navigate('/assessments')}>
-                        Take Assessment
+                        Practice Tests <ChevronRight size={16} />
                     </button>
-                    <button className="btn btn-secondary" style={{ backgroundColor: '#4f46e5', color: 'white' }} onClick={() => navigate('/companies')}>
-                        Company-Wise Preparation
+                    <button className="btn btn-secondary" style={{ background: '#4f46e5' }} onClick={() => navigate('/companies')}>
+                        Company Prep
                     </button>
-                    <button className="btn btn-secondary" style={{ backgroundColor: '#0f766e', color: 'white' }} onClick={() => navigate('/mock-interview')}>
-                        Mock Interview
-                    </button>
-                    <button className="btn btn-outline" onClick={() => navigate('/practice')}>
-                        Practice Questions
+                    <button className="btn-back glass" onClick={() => navigate('/mock-interview')}>
+                        AI Mock Interview
                     </button>
                 </div>
             </div>
@@ -218,3 +220,4 @@ const StudentDashboard = () => {
 };
 
 export default StudentDashboard;
+

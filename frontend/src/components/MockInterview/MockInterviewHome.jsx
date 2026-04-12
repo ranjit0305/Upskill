@@ -94,15 +94,15 @@ const MockInterviewHome = () => {
     };
 
     return (
-        <div className="mock-page">
+        <div className="mock-page premium-bg">
             <div className="mock-shell">
-                <button className="mock-back" onClick={() => navigate(companyId ? `/company/${companyId}` : '/dashboard')}>
+                <button className="mock-back glass" onClick={() => navigate(companyId ? `/company/${companyId}` : '/dashboard')}>
                     <ArrowLeft size={18} /> Back
                 </button>
 
                 <header className="mock-hero">
                     <div className="mock-hero-content">
-                        <div className="mock-badge">AI-Powered Practice</div>
+                        <div className="ai-badge">AI-Powered Practice</div>
                         <h1>{companyId ? `${company?.name || 'Company'} Mock Interview` : 'Master Your Interviews'}</h1>
                         <p>
                             {companyId
@@ -113,17 +113,17 @@ const MockInterviewHome = () => {
                 </header>
 
                 <div className="mock-stats-strip">
-                    <div className="mock-stat-item">
+                    <div className="mock-stat-item glass-card">
                         <span className="mock-stat-label">Total Sessions</span>
                         <span className="mock-stat-value">{stats.totalSessions}</span>
                         <span className="mock-stat-sub">Completed practice</span>
                     </div>
-                    <div className="mock-stat-item">
+                    <div className="mock-stat-item glass-card">
                         <span className="mock-stat-label">Average Score</span>
                         <span className="mock-stat-value">{stats.avgScore}%</span>
                         <span className="mock-stat-sub">Performance trend</span>
                     </div>
-                    <div className="mock-stat-item">
+                    <div className="mock-stat-item glass-card">
                         <span className="mock-stat-label">Recent Activity</span>
                         <span className="mock-stat-value" style={{ fontSize: '1.25rem' }}>{formatDate(stats.lastDate)}</span>
                         <span className="mock-stat-sub">Last attempt</span>
@@ -131,7 +131,7 @@ const MockInterviewHome = () => {
                 </div>
 
                 <div className="mock-grid">
-                    <section className="mock-card">
+                    <section className="mock-card glass-card">
                         <div className="mock-card-header">
                             <Target className="text-indigo" size={24} />
                             <h2>Configure Your Session</h2>
@@ -178,7 +178,7 @@ const MockInterviewHome = () => {
                         </div>
                     </section>
 
-                    <aside className="mock-card">
+                    <aside className="mock-card glass-card">
                         <div className="mock-card-header">
                             <History className="text-slate" size={20} />
                             <h3>Recent Performance</h3>

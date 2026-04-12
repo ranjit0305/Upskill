@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { adminAPI } from '../../services/api';
-import { Users, BookOpen, Layers, TrendingUp, BarChart2, PlusCircle, Settings } from 'lucide-react';
+import { Users, BookOpen, Layers, TrendingUp, BarChart2, PlusCircle, Settings, Layout } from 'lucide-react';
 import '../Admin/Admin.css';
 
 const AdminDashboard = () => {
@@ -26,91 +26,102 @@ const AdminDashboard = () => {
     if (loading) return <div className="loading">Loading admin dashboard...</div>;
 
     return (
-        <div className="admin-container">
-            <header className="management-header">
-                <div>
-                    <h1>Admin Dashboard</h1>
-                    <p>Manage platform content and view system analytics</p>
-                </div>
-                <div className="nav-right">
-                    <button className="btn btn-outline" onClick={() => navigate('/dashboard')}>
-                        Switch to Student View
-                    </button>
-                </div>
-            </header>
-
-            <div className="admin-grid">
-                {/* Users Stat */}
-                <div className="admin-card stat-card">
-                    <div className="stat-icon" style={{ backgroundColor: '#e0e7ff' }}>
-                        <Users size={24} color="#4338ca" />
+        <div className="admin-container premium-bg">
+            <div className="container animate-fade-in">
+                <header className="management-header">
+                    <div>
+                        <h1>Executive Control</h1>
+                        <p style={{ color: 'var(--slate)', fontSize: '1.1rem' }}>Orchestrating platform intelligence and user growth.</p>
                     </div>
-                    <div className="stat-content">
-                        <div className="stat-value">{stats?.users?.total || 0}</div>
-                        <div className="stat-label">Total Users</div>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
-                            {stats?.users?.students} Students | {stats?.users?.seniors} Seniors
+                    <div className="nav-right">
+                        <button className="btn-back glass" onClick={() => navigate('/dashboard')}>
+                            <Layout size={16} /> Switch to Student View
+                        </button>
+                    </div>
+                </header>
+
+                <div className="admin-grid">
+                    {/* Users Stat */}
+                    <div className="admin-card stat-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
+                            <Users size={28} color="#6366f1" />
+                        </div>
+                        <div className="stat-content">
+                            <div className="stat-value">{stats?.users?.total || 0}</div>
+                            <div className="stat-label">Total Talent</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--slate)', marginTop: '0.75rem', fontWeight: 600 }}>
+                                {stats?.users?.students} Students • {stats?.users?.seniors} Mentors
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Content Stat */}
+                    <div className="admin-card stat-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)' }}>
+                            <BookOpen size={28} color="#f59e0b" />
+                        </div>
+                        <div className="stat-content">
+                            <div className="stat-value">{stats?.content?.questions || 0}</div>
+                            <div className="stat-label">Intelligence Pool</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--slate)', marginTop: '0.75rem', fontWeight: 600 }}>
+                                Across {stats?.content?.assessments} Active Assessments
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Performance Stat */}
+                    <div className="admin-card stat-card">
+                        <div className="stat-icon" style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)' }}>
+                            <TrendingUp size={28} color="#10b981" />
+                        </div>
+                        <div className="stat-content">
+                            <div className="stat-value">{stats?.performance?.avg_readiness || 0}%</div>
+                            <div className="stat-label">Avg Platform Readiness</div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--slate)', marginTop: '0.75rem', fontWeight: 600 }}>
+                                From {stats?.content?.submissions} Global Submissions
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                {/* Content Stat */}
-                <div className="admin-card stat-card">
-                    <div className="stat-icon" style={{ backgroundColor: '#fef3c7' }}>
-                        <BookOpen size={24} color="#d97706" />
-                    </div>
-                    <div className="stat-content">
-                        <div className="stat-value">{stats?.content?.questions || 0}</div>
-                        <div className="stat-label">Questions Pool</div>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
-                            Across {stats?.content?.assessments} Assessments
+                <h2 style={{ marginTop: '4rem', marginBottom: '2rem', fontWeight: 900, letterSpacing: '-0.02em' }}>Platform Governance</h2>
+                <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))' }}>
+                    <div className="admin-card action-card" onClick={() => navigate('/admin/questions')}>
+                        <div style={{ marginBottom: '1.5rem', background: '#eef2ff', padding: '1rem', borderRadius: '16px', display: 'inline-flex' }}>
+                            <PlusCircle size={32} color="var(--primary)" />
                         </div>
+                        <h3>Question Library</h3>
+                        <p style={{ color: 'var(--slate)', fontSize: '0.9rem' }}>Curate the global knowledge base with technical and behavioral questions.</p>
                     </div>
-                </div>
 
-                {/* Performance Stat */}
-                <div className="admin-card stat-card">
-                    <div className="stat-icon" style={{ backgroundColor: '#d1fae5' }}>
-                        <TrendingUp size={24} color="#059669" />
-                    </div>
-                    <div className="stat-content">
-                        <div className="stat-value">{stats?.performance?.avg_readiness || 0}%</div>
-                        <div className="stat-label">Avg Readiness Score</div>
-                        <div style={{ fontSize: '0.8rem', color: '#64748b', marginTop: '0.5rem' }}>
-                            Based on {stats?.content?.submissions} submissions
+                    <div className="admin-card action-card" onClick={() => navigate('/admin/assessments')}>
+                        <div style={{ marginBottom: '1.5rem', background: '#eef2ff', padding: '1rem', borderRadius: '16px', display: 'inline-flex' }}>
+                            <Layers size={32} color="var(--primary)" />
                         </div>
+                        <h3>Assessment Architect</h3>
+                        <p style={{ color: 'var(--slate)', fontSize: '0.9rem' }}>Design immersive testing experiences by clustering domain questions.</p>
                     </div>
-                </div>
-            </div>
 
-            <h2 style={{ marginTop: '3rem', marginBottom: '1.5rem' }}>Quick Actions</h2>
-            <div className="admin-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))' }}>
-                <div className="admin-card action-card" onClick={() => navigate('/admin/questions')}>
-                    <PlusCircle size={32} color="var(--primary)" style={{ marginBottom: '1rem' }} />
-                    <h3>Manage Questions</h3>
-                    <p>Add, edit, or remove questions from the global pool.</p>
-                </div>
+                    <div className="admin-card action-card">
+                        <div style={{ marginBottom: '1.5rem', background: '#eef2ff', padding: '1rem', borderRadius: '16px', display: 'inline-flex' }}>
+                            <BarChart2 size={32} color="var(--primary)" />
+                        </div>
+                        <h3>Talent Analytics</h3>
+                        <p style={{ color: 'var(--slate)', fontSize: '0.9rem' }}>Deep dive into batch-wise performance and mastery trends.</p>
+                    </div>
 
-                <div className="admin-card action-card" onClick={() => navigate('/admin/assessments')}>
-                    <Layers size={32} color="var(--primary)" style={{ marginBottom: '1rem' }} />
-                    <h3>Manage Assessments</h3>
-                    <p>Create new tests by bundling questions together.</p>
-                </div>
-
-                <div className="admin-card action-card">
-                    <BarChart2 size={32} color="var(--primary)" style={{ marginBottom: '1rem' }} />
-                    <h3>Detailed Analytics</h3>
-                    <p>View performance breakdown by category and batch.</p>
-                </div>
-
-                <div className="admin-card action-card">
-                    <Settings size={32} color="var(--primary)" style={{ marginBottom: '1rem' }} />
-                    <h3>System Settings</h3>
-                    <p>Configure LLM parameters and platform constants.</p>
+                    <div className="admin-card action-card" onClick={() => navigate('/admin/settings')}>
+                        <div style={{ marginBottom: '1.5rem', background: '#eef2ff', padding: '1rem', borderRadius: '16px', display: 'inline-flex' }}>
+                            <Settings size={32} color="var(--primary)" />
+                        </div>
+                        <h3>Enterprise Config</h3>
+                        <p style={{ color: 'var(--slate)', fontSize: '0.9rem' }}>Fine-tune LLM parameters, prompt weights, and system logic.</p>
+                    </div>
                 </div>
             </div>
         </div>
     );
+
 };
 
 export default AdminDashboard;

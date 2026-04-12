@@ -12,6 +12,7 @@ import AssessmentManager from './components/Admin/AssessmentManager';
 import CompanySelection from './components/CompanyPrep/CompanySelection';
 import CompanyDashboard from './components/CompanyPrep/CompanyDashboard';
 import FeedbackUpload from './components/CompanyPrep/FeedbackUpload';
+import AISettings from './components/Admin/AISettings';
 import CodingAssessmentView from './components/Assessment/CodingAssessmentView';
 import MockInterviewHome from './components/MockInterview/MockInterviewHome';
 import MockInterviewSession from './components/MockInterview/MockInterviewSession';
@@ -123,6 +124,14 @@ function AppRoutes() {
                 element={
                     <ProtectedRoute roles={['admin', 'senior']}>
                         <AssessmentManager />
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/admin/settings"
+                element={
+                    <ProtectedRoute roles={['admin', 'senior']}>
+                        <AISettings />
                     </ProtectedRoute>
                 }
             />
