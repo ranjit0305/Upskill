@@ -1,3 +1,4 @@
+from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
@@ -161,7 +162,7 @@ async def finish_mock_interview(
 @router.get("/history", response_model=MockInterviewHistoryResponse)
 async def get_mock_interview_history(
     limit: int = Query(10, ge=1, le=30),
-    company_id: str | None = Query(None),
+    company_id: Optional[str] = Query(None),
     current_user=Depends(get_current_user_from_token),
 ):
     sessions = await MockInterviewService.get_history(str(current_user.id), limit, company_id=company_id)

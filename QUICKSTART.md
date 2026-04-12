@@ -9,13 +9,15 @@
 
 1. **Navigate to backend:**
    ```bash
-   cd d:\Upskill\backend
+   cd backend
    ```
 
 2. **Create virtual environment:**
    ```bash
-   python -m venv venv
-   venv\Scripts\activate
+   python3 -m venv venv
+   source venv/bin/activate  # Mac/Linux
+   # OR
+   venv\Scripts\activate     # Windows
    ```
 
 3. **Install dependencies:**
@@ -25,7 +27,9 @@
 
 4. **Setup environment:**
    ```bash
-   copy .env.example .env
+   cp .env.example .env  # Mac/Linux
+   # OR
+   copy .env.example .env  # Windows
    ```
    
    Edit `.env` and update:
@@ -34,6 +38,10 @@
 
 5. **Run server:**
    ```bash
+   ./start.sh  # Mac/Linux
+   # OR
+   start.bat   # Windows
+   # OR manually:
    uvicorn app.main:app --reload
    ```
    
@@ -43,7 +51,7 @@
 
 1. **Navigate to frontend:**
    ```bash
-   cd d:\Upskill\frontend
+   cd frontend
    ```
 
 2. **Install dependencies:**

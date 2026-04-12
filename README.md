@@ -45,6 +45,7 @@ cd backend
 ```bash
 python -m venv venv
 venv\Scripts\activate  # Windows
+source venv/bin/activate  # Mac/Linux
 ```
 
 3. Install dependencies:
@@ -54,7 +55,9 @@ pip install -r requirements.txt
 
 4. Create `.env` file:
 ```bash
-copy .env.example .env
+cp .env.example .env  # Mac/Linux
+# OR
+copy .env.example .env  # Windows
 ```
 
 5. Update `.env` with your configuration:
@@ -64,6 +67,11 @@ copy .env.example .env
 
 6. Run the server:
 ```bash
+# Using the start script:
+./start.sh  # Mac/Linux
+start.bat   # Windows
+
+# OR manually:
 uvicorn app.main:app --reload
 ```
 
