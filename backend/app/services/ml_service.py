@@ -16,7 +16,8 @@ class MLService:
                 cls._qa_pipeline = pipeline(
                     "question-answering", 
                     model="distilbert-base-cased-distilled-squad",
-                    tokenizer="distilbert-base-cased-distilled-squad"
+                    tokenizer="distilbert-base-cased-distilled-squad",
+                    use_fast=False
                 )
                 logger.info("DistilBERT model loaded successfully.")
             except Exception as e:
@@ -32,7 +33,8 @@ class MLService:
             try:
                 cls._classification_pipeline = pipeline(
                     "zero-shot-classification",
-                    model="cross-encoder/nli-deberta-v3-small"
+                    model="cross-encoder/nli-deberta-v3-small",
+                    use_fast=False
                 )
                 logger.info("DeBERTa Classification model loaded successfully.")
             except Exception as e:

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { 
     ArrowLeft, 
@@ -42,14 +42,19 @@ const MockInterviewReport = () => {
     }, [sessionId]);
 
     const radarData = useMemo(() => {
-        if (!session?.section_scores) return [];
+        if (!session || !session.section_scores) return [];
+        const overall = session.overall_score || 0;
+        const hr = session.section_scores.hr || 0;
+        const tech = session.section_scores.technical || 0;
+        const coding = session.section_scores.coding || 0;
+
         return [
-            { subject: 'Relevance', A: session.overall_score > 70 ? 85 : 60, fullMark: 100 },
-            { subject: 'Clarity', A: session.section_scores.hr || 70, fullMark: 100 },
-            { subject: 'Structure', A: session.section_scores.technical || 65, fullMark: 100 },
-            { subject: 'Confidence', A: 75, fullMark: 100 },
-            { subject: 'Technical', A: session.section_scores.technical || 50, fullMark: 100 },
-            { subject: 'Coding', A: session.section_scores.coding || 40, fullMark: 100 },
+            { subject: 'Relevance', A: overall > 70 ? 85 : Math.max(overall, 40), fullMark: 100 },
+            { subject: 'Clarity', A: hr || 60, fullMark: 100 },
+            { subject: 'Structure', A: tech || 55, fullMark: 100 },
+            { subject: 'Confidence', A: Math.max(overall - 5, 50), fullMark: 100 },
+            { subject: 'Technical', A: tech || 50, fullMark: 100 },
+            { subject: 'Coding', A: coding || 40, fullMark: 100 },
         ];
     }, [session]);
 

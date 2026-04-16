@@ -3,6 +3,7 @@ from typing import Any, Dict, List, Optional
 import random
 import re
 import statistics
+import logging
 
 from fastapi import HTTPException, status
 
@@ -18,6 +19,9 @@ from app.models.mock_interview import (
     MockQuestionCategory,
 )
 from app.services.gemini_service import GeminiEvaluator
+
+
+logger = logging.getLogger(__name__)
 
 
 class MockInterviewService:
@@ -557,43 +561,58 @@ class MockInterviewService:
 
     @staticmethod
     async def _finalize_session(session: MockInterviewSession) -> None:
-        section_map = {
-            MockQuestionCategory.HR.value: [],
-            MockQuestionCategory.TECHNICAL.value: [],
-            MockQuestionCategory.CODING.value: [],
-        }
-        for answer in session.answers:
-            section_map[answer.category.value].append(answer.feedback.score)
+        try:
+            section_map = {
+                MockQuestionCategory.HR.value: [],
+                MockQuestionCategory.TECHNICAL.value: [],
+                MockQuestionCategory.CODING.value: [],
+            }
+            for answer in session.answers:
+                if answer.category and answer.category.value in section_map:
+                    section_map[answer.category.value].append(answer.feedback.score)
 
-        session.section_scores = MockInterviewSectionScore(
-            hr=round(statistics.mean(section_map["hr"]), 2) if section_map["hr"] else 0.0,
-            technical=round(statistics.mean(section_map["technical"]), 2) if section_map["technical"] else 0.0,
-            coding=round(statistics.mean(section_map["coding"]), 2) if section_map["coding"] else 0.0,
-        )
+            session.section_scores = MockInterviewSectionScore(
+                hr=round(statistics.mean(section_map["hr"]), 2) if section_map["hr"] else 0.0,
+                technical=round(statistics.mean(section_map["technical"]), 2) if section_map["technical"] else 0.0,
+                coding=round(statistics.mean(section_map["coding"]), 2) if section_map["coding"] else 0.0,
+            )
 
-        weighted_parts = []
-        total_weight = 0.0
-        if section_map["hr"]:
-            weighted_parts.append(session.section_scores.hr * 0.25)
-            total_weight += 0.25
-        if section_map["technical"]:
-            weighted_parts.append(session.section_scores.technical * 0.35)
-            total_weight += 0.35
-        if section_map["coding"]:
-            weighted_parts.append(session.section_scores.coding * 0.40)
-            total_weight += 0.40
+            weighted_parts = []
+            total_weight = 0.0
+            if section_map["hr"]:
+                weighted_parts.append(session.section_scores.hr * 0.25)
+                total_weight += 0.25
+            if section_map["technical"]:
+                weighted_parts.append(session.section_scores.technical * 0.35)
+                total_weight += 0.35
+            if section_map["coding"]:
+                weighted_parts.append(session.section_scores.coding * 0.40)
+                total_weight += 0.40
 
-        session.overall_score = round(sum(weighted_parts) / total_weight, 2) if total_weight else 0.0
+            session.overall_score = round(sum(weighted_parts) / total_weight, 2) if total_weight else 0.0
 
-        session.summary = MockInterviewService._build_summary(session)
-        session.recommendations = MockInterviewService._build_recommendations(session)
-        comparison = await MockInterviewService._build_comparison(session)
-        session.comparison_summary = comparison["summary"]
-        session.improved_areas = comparison["improved_areas"]
-        session.focus_areas = comparison["focus_areas"]
-        session.status = MockInterviewStatus.COMPLETED
-        session.completed_at = datetime.utcnow()
-        session.updated_at = datetime.utcnow()
+            session.summary = MockInterviewService._build_summary(session)
+            session.recommendations = MockInterviewService._build_recommendations(session)
+            
+            try:
+                comparison = await MockInterviewService._build_comparison(session)
+                session.comparison_summary = comparison["summary"]
+                session.improved_areas = comparison["improved_areas"]
+                session.focus_areas = comparison["focus_areas"]
+            except Exception as ce:
+                logger.error(f"Error building comparison for session {session.id}: {ce}")
+                session.comparison_summary = "Progress insights are temporarily unavailable."
+
+            session.status = MockInterviewStatus.COMPLETED
+            session.completed_at = datetime.utcnow()
+            session.updated_at = datetime.utcnow()
+        except Exception as e:
+            logger.error(f"Failed to finalize mock interview session {session.id}: {e}")
+            # Fallback to avoid complete failure
+            session.status = MockInterviewStatus.COMPLETED
+            session.completed_at = datetime.utcnow()
+            if not session.summary:
+                session.summary = "Session completed. Review your individual answers below."
 
     @staticmethod
     def _build_summary(session: MockInterviewSession) -> str:
